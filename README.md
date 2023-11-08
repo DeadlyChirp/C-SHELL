@@ -6,9 +6,6 @@
 
 
 
-# projet-systeme-exploitation
-programmation d'un interpréteur de commandes
-
 # Projet : programmation d'un interpréteur de commandes
 
 **L3 Informatique - Système**
