@@ -1,0 +1,1 @@
+//Fonction utilitaires utilisées dans le projet

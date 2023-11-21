@@ -1,0 +1,1 @@
+//Gerer les signaux (SIGINT, SIGTERM)
