@@ -11,7 +11,7 @@
 extern struct shell_info *shell;
 
 // fonction pour tronquer le chemin du répertoire si trop long
-char *truncate_dir(char *dir, int max_length) {
+char *tronquer_chemin_repertoire(char *dir, int max_length) {
     int dir_len = strlen(dir);
     if (dir_len <= max_length) {
         return dir;
@@ -36,10 +36,10 @@ void update_cwd_info() {
 }
 
 // fonction pour afficher le prompt du shell
-void mysh_print_prompt() {
+void print_prompt() {
     update_cwd_info(); //fonction pour mettre à jour les informations sur le répertoire de travail actuel
 
-    char *truncated_dir = truncate_dir(shell->cur_dir, 20); // fonction pour tronquer le chemin du répertoire si trop long
+    char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20); // fonction pour tronquer le chemin du répertoire si trop long
 
     // création du prompt 
     printf(COLOR_CYAN "[%d]" COLOR_NONE " %s in " COLOR_YELLOW "%s" COLOR_NONE "\n",

@@ -12,12 +12,12 @@
 #define COLOR_GRAY "\033[1;30m"
 
 // declaration de la fonction pour afficher le prompt du shell
-void mysh_print_prompt();
+void print_prompt();
 
 // declaration de la fonction pour mettre à jour les informations sur le répertoire de travail actuel
 void update_cwd_info();
 
 // declaration de la fonction pour tronquer le chemin du répertoire si trop long
-char *truncate_dir(char *dir, int max_length);
+char *tronquer_chemin_repertoire(char *dir, int max_length);
 
 #endif // PROMPT_H
