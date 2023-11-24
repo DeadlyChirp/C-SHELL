@@ -3,16 +3,18 @@
 
 #include <sys/types.h>
 
+
+//definition du type de processus
 struct process {
-    char *command;
-    int argc;
-    char **argv;
-    char *input_path;
-    char *output_path;
-    pid_t pid;
-    int type;
-    int status;
-    struct process *next;
+    char *command; // commande du processus
+    int argc; // nombre d'arguments
+    char **argv; // tableau des arguments
+    char *input_path; // chemin du fichier d'entrée
+    char *output_path; // chemin du fichier de sortie
+    pid_t pid; // process id
+    int type; // type de processus
+    int status; // status du processus
+    struct process *next; // pointeur vers le processus suivant
 };
 
 #endif // PROCESS_H

@@ -6,11 +6,11 @@
 #include <limits.h>
 #include "prompt.h"
 #include "shell_info.h"
-// Assume this contains the struct shell_info and other relevant declarations
+
 
 extern struct shell_info *shell;
 
-// Helper function to truncate directory path if too long
+// fonction pour tronquer le chemin du répertoire si trop long
 char *truncate_dir(char *dir, int max_length) {
     int dir_len = strlen(dir);
     if (dir_len <= max_length) {
@@ -27,7 +27,7 @@ char *truncate_dir(char *dir, int max_length) {
     return truncated;
 }
 
-// Function to update current working directory in shell_info
+//fonction pour mettre à jour les informations sur le répertoire de travail actuel
 void update_cwd_info() {
     char temp[PATH_MAX];
     if (getcwd(temp, sizeof(temp)) != NULL) {
@@ -35,15 +35,15 @@ void update_cwd_info() {
     }
 }
 
-// Function to print the shell prompt
+// fonction pour afficher le prompt du shell
 void mysh_print_prompt() {
-    update_cwd_info(); // Update the current working directory info
+    update_cwd_info(); //fonction pour mettre à jour les informations sur le répertoire de travail actuel
 
-    char *truncated_dir = truncate_dir(shell->cur_dir, 20); // Truncate if longer than 20 characters
+    char *truncated_dir = truncate_dir(shell->cur_dir, 20); // fonction pour tronquer le chemin du répertoire si trop long
 
-    // Create and print the prompt
+    // création du prompt 
     printf(COLOR_CYAN "[%d]" COLOR_NONE " %s in " COLOR_YELLOW "%s" COLOR_NONE "\n",
-           shell->nr_jobs, shell->cur_user, truncated_dir);
+           shell->nbr_jobs, shell->cur_user, truncated_dir);
 
     if (truncated_dir != shell->cur_dir) {
         free(truncated_dir);
