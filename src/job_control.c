@@ -1,1 +1,0 @@
-//Gerer les jobs (taches) en arrriere plan ou en avant plan
