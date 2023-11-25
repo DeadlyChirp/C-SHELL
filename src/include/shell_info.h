@@ -6,6 +6,7 @@
 #include "job.h"
 #include "process.h"
 #include <sys/types.h>
+#include <string.h>
 #include "prompt.h"
 
 // Definition of the shell_info structure
@@ -15,6 +16,7 @@ struct shell_info {
     char pw_dir[PATH_BUFSIZE]; // répertoire de travail de l'utilisateur
     struct job *jobs[NBR_JOBS + 1]; // tableau des jobs
     int nbr_jobs;  // nombre de jobs
+    char project_name[100];
 };
 
 #endif // SHELL_INFO_H
