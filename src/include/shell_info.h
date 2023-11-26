@@ -1,22 +1,24 @@
 #ifndef SHELL_INFO_H
 #define SHELL_INFO_H
+
 #define NBR_JOBS 20
 #define PATH_BUFSIZE 1024
 #define TOKEN_BUFSIZE 64
+#define PROJECT_NAME_SIZE 100
+
 #include "job.h"
 #include "process.h"
 #include <sys/types.h>
 #include <string.h>
-#include "prompt.h"
 
-// Definition of the shell_info structure
+// structure 
 struct shell_info {
-    char cur_user[TOKEN_BUFSIZE]; // utilisateur courant
-    char cur_dir[PATH_BUFSIZE]; // répertoire de travail courant
-    char pw_dir[PATH_BUFSIZE]; // répertoire de travail de l'utilisateur
-    struct job *jobs[NBR_JOBS + 1]; // tableau des jobs
-    int nbr_jobs;  // nombre de jobs
-    char project_name[100];
+    char cur_user[TOKEN_BUFSIZE]; // 
+    char cur_dir[PATH_BUFSIZE];   // Current working directory
+    char pw_dir[PATH_BUFSIZE];    // User's home directory
+    struct job *jobs[NBR_JOBS + 1]; // Array of jobs
+    int nbr_jobs;                   // Number of jobs
+    char project_name[PROJECT_NAME_SIZE]; // Project name
 };
 
 #endif // SHELL_INFO_H

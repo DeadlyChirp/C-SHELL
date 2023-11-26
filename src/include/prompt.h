@@ -18,6 +18,6 @@ void print_prompt();
 void update_cwd_info();
 
 // declaration de la fonction pour tronquer le chemin du répertoire si trop long
-char *tronquer_chemin_repertoire(char *dir, int max_length);
+char *tronquer_chemin_repertoire(const char *dir, int max_length);
 
 #endif // PROMPT_H
