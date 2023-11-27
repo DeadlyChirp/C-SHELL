@@ -4,6 +4,8 @@
 #include <pwd.h>
 #include <string.h>
 #include <limits.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #include "prompt.h"
 #include "shell_info.h"
 
@@ -39,14 +41,20 @@ void update_cwd_info() {
 }
 
 // Fonction pour afficher le prompt du shell
-void print_prompt() {
+char *afficher_prompt() {
     update_cwd_info();
-    // Tronquer le chemin du répertoire si trop long
     char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
 
-    
-    printf("\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
-           shell->nbr_jobs, shell->cur_user, truncated_dir);
+    char prompt[1024];
+    sprintf(prompt, "\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
+            shell->nbr_jobs, shell->cur_user, truncated_dir);
+
+    char *line = readline(prompt);
 
     free(truncated_dir);  // Libérer la mémoire allouée par tronquer_chemin_repertoire()
+    if (line && *line) {
+        add_history(line);
+    }
+
+    return line;
 }
