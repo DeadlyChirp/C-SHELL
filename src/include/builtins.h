@@ -15,6 +15,9 @@ int quitter_shell(int argc, char **argv);
 // Déclaration de la fonction pour mettre à jour le répertoire de travail actuel
 void mise_a_jour_repertoire_courant();
 
+// Déclaration de la fonction pour afficher le dernier statut
+int afficher_dernier_statut(int argc, char **argv);
+
 // Ajouter d'autres déclarations de fonctions de commandes intégrées si nécessaire...
 
 #endif // BUILTIN_H

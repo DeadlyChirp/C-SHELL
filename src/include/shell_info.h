@@ -13,12 +13,13 @@
 
 // structure 
 struct shell_info {
-    char cur_user[TOKEN_BUFSIZE]; // 
-    char cur_dir[PATH_BUFSIZE];   // Current working directory
-    char pw_dir[PATH_BUFSIZE];    // User's home directory
-    struct job *jobs[NBR_JOBS + 1]; // Array of jobs
-    int nbr_jobs;                   // Number of jobs
-    char project_name[PROJECT_NAME_SIZE]; // Project name
+    char cur_user[TOKEN_BUFSIZE]; // utilisateur courant
+    char cur_dir[PATH_BUFSIZE];   // repertoire courant
+    char pw_dir[PATH_BUFSIZE];    // repertoir de travail
+    struct job *jobs[NBR_JOBS + 1]; // tableau des jobs
+    int nbr_jobs;                   // nombre de jobs
+    char project_name[PROJECT_NAME_SIZE]; // Nom du projet
+    int dernier_statut; // dernier statut
 };
 
 #endif // SHELL_INFO_H

@@ -8,7 +8,7 @@ extern struct shell_info *shell;
 
 // builtins.c sert à implémenter les commandes internes du shell
 
-// Change le répertoire de travail actuel
+// Change le répertoire de travail actuel "cd"
 int changer_repertoire(int argc, char **argv) {
     if (argc == 1) {
         chdir(shell->pw_dir);
@@ -22,7 +22,7 @@ int changer_repertoire(int argc, char **argv) {
     return 0;
 }
 
-// Affiche le répertoire de travail actuel
+// Affiche le répertoire de travail actuel "pwd"
 int afficher_repertoire(int argc, char **argv) {
     char cwd[PATH_BUFSIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -34,21 +34,27 @@ int afficher_repertoire(int argc, char **argv) {
     return 0;
 }
 
-// Quitte le shell
+// Quitte le shell "exit"
 int quitter_shell(int argc, char **argv) {
     int statut_sortie = 0;
     if (argc > 1) {
         statut_sortie = atoi(argv[1]);
     }
-    printf("Groupe 59: Fin du shell avec le statut %d\n", statut_sortie);
+    printf("Groupe 59: exit :  Fin du shell avec le statut %d\n", statut_sortie);
     exit(statut_sortie);
 }
 
-// Met à jour le répertoire de travail actuel dans les informations du shell
+// Met à jour le répertoire de travail actuel dans les informations du shell 
 void mise_a_jour_repertoire_courant() {
     if (getcwd(shell->cur_dir, sizeof(shell->cur_dir)) == NULL) {
         perror("Groupe 59 : Erreur lors de la mise à jour du répertoire courant");
     }
 }
 
+
+// fonction pour afficher le dernier statut "?"
+int afficher_dernier_statut(int argc, char **argv) {
+    printf("Valeur de retour de la dernière commande : %d\n", shell->dernier_statut);
+    return 0;
+}
 // Ajouter d'autres fonctions de commandes internes apres
