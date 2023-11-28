@@ -1,0 +1,7 @@
+{
+    "github-enterprise.uri": "https://gaufre.informatique.univ-paris-diderot.fr",
+    "files.associations": {
+        "prompt.h": "c",
+        "shell_info.h": "c"
+    }
+}
