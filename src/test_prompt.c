@@ -34,7 +34,7 @@ void simulate_shell_behavior() {
     printf("Enter 'cd <path>' to change directory, 'jobs <number>' to set jobs, or 'exit' to quit.\n");
 
     while (1) {
-        print_prompt();
+        // print_prompt();
         fgets(input, sizeof(input), stdin);
         
         // Removing trailing newline character

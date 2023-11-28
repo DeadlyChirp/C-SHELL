@@ -14,7 +14,7 @@ SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # Executable name
-EXECUTABLE = myproject
+EXECUTABLE = jsh
 
 # Default target
 all: $(EXECUTABLE)
