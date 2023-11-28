@@ -3,6 +3,7 @@
 #include <string.h>
 
 int parse_command(char *command, char **tokens) {
+    
     char *token = strtok(command, " ");
     int i = 0;
     while (token != NULL) {
