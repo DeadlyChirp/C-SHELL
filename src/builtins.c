@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "shell_info.h"
-#include "builtins.h"
+#include "include/shell_info.h"
+#include "include/builtins.h"
 
 struct shell_info *shell;
 

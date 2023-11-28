@@ -4,10 +4,10 @@
 #include <pwd.h>
 #include <string.h>
 #include <limits.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "prompt.h"
-#include "shell_info.h"
+// #include <readline/readline.h>
+// #include <readline/history.h>
+#include "include/prompt.h"
+#include "include/shell_info.h"
 
 extern struct shell_info *shell;
 

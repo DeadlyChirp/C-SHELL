@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <string.h>
-#include "prompt.h"
-#include "shell_info.h"
+#include "include/prompt.h"
+#include "include/shell_info.h"
 
 struct shell_info *shell;
 
