@@ -40,10 +40,12 @@ int exec_command(char **tokens) {
 }
 
 int main(void) {
+
     char command[] = "cd -";
     char *tokens[10];
     parse_command(command, tokens);
     exec_command(tokens);
     return 0;
+    
 }
 
