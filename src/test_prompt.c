@@ -56,12 +56,3 @@ void simulate_shell_behavior() {
     }
 }
 
-int main() {
-    initialize_shell();
-    simulate_shell_behavior();
-
-    // Free allocated memory for shell
-    free(shell);
-
-    return 0;
-}
