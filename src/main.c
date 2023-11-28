@@ -3,7 +3,7 @@
 void main_loop()
 {
   char input[INPUT_SIZE];
-  char current_dir[1028];
+  char current_dir[1024];
 
   do
   {
