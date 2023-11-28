@@ -6,10 +6,10 @@
 #include <limits.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "prompt.h"
-#include "shell_info.h"
+#include "include/prompt.h"
+#include "include/shell_info.h"
 
-extern struct shell_info *shell;
+struct shell_info *shell;
 
 // fonction pour tronquer le chemin du répertoire si trop long
 char *tronquer_chemin_repertoire(const char *dir, int max_length) {
@@ -57,4 +57,33 @@ char *afficher_prompt() {
     }
 
     return line;
+}
+//test
+int main() {
+    // Allocate memory for the shell_info structure
+    shell = malloc(sizeof(struct shell_info));
+    if (!shell) {
+        fprintf(stderr, "Failed to allocate memory for shell_info\n");
+        return EXIT_FAILURE;
+    }
+
+    // Initialize the shell_info structure
+    strcpy(shell->cur_user, "test_user");
+    strcpy(shell->cur_dir, "/home/test_user");
+    strcpy(shell->pw_dir, "/home");
+    shell->nbr_jobs = 3; // Example number of jobs
+
+    // Test the prompt functionality
+    char *prompt_output = afficher_prompt();
+    if (prompt_output) {
+        printf("Prompt output: %s\n", prompt_output);
+        free(prompt_output);
+    } else {
+        printf("Prompt generation failed.\n");
+    }
+
+    // Clean up
+    free(shell);
+
+    return EXIT_SUCCESS;
 }
