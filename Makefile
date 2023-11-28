@@ -1,8 +1,12 @@
 # Compiler
 CC = gcc
 
+
 # Compiler flags
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -Isrc/include
+
+# Linker flags
+LDFLAGS = -lreadline
 
 # Source directory
 SRC_DIR = src
@@ -25,8 +29,12 @@ all: $(EXECUTABLE)
 
 # Link object files into the executable
 $(EXECUTABLE): $(OBJ_FILES)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 # Clean the project
 clean:
 	rm -f $(OBJ_FILES) $(EXECUTABLE)
+
+
+
+
