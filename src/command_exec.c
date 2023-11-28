@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "command_parser.h"
+#include "include/command_parser.h"
 
 int exec_command(char **tokens) {
     if (strcmp(tokens[0], "pwd") == 0) {
