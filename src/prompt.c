@@ -40,50 +40,23 @@ void update_cwd_info() {
     }
 }
 
-// Fonction pour afficher le prompt du shell
-char *afficher_prompt() {
-    update_cwd_info();
-    char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
+// // Fonction pour afficher le prompt du shell
+// char *afficher_prompt() {
+//     update_cwd_info();
+//     char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
 
-    char prompt[1024];
-    sprintf(prompt, "\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
-            shell->nbr_jobs, shell->cur_user, truncated_dir);
+//     char prompt[1024];
+//     sprintf(prompt, "\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
+//             shell->nbr_jobs, shell->cur_user, truncated_dir);
 
-    char *line = readline(prompt);
+//     char *line = readline(prompt);
 
-    free(truncated_dir);  // Libérer la mémoire allouée par tronquer_chemin_repertoire()
-    if (line && *line) {
-        add_history(line);
-    }
+//     free(truncated_dir);  // Libérer la mémoire allouée par tronquer_chemin_repertoire()
+//     if (line && *line) {
+//         add_history(line);
+//     }
 
-    return line;
-}
-//test
-int main() {
-    // Allocate memory for the shell_info structure
-    shell = malloc(sizeof(struct shell_info));
-    if (!shell) {
-        fprintf(stderr, "Failed to allocate memory for shell_info\n");
-        return EXIT_FAILURE;
-    }
+//     return line;
+// }
 
-    // Initialize the shell_info structure
-    strcpy(shell->cur_user, "test_user");
-    strcpy(shell->cur_dir, "/home/test_user");
-    strcpy(shell->pw_dir, "/home");
-    shell->nbr_jobs = 3; // Example number of jobs
 
-    // Test the prompt functionality
-    char *prompt_output = afficher_prompt();
-    if (prompt_output) {
-        printf("Prompt output: %s\n", prompt_output);
-        free(prompt_output);
-    } else {
-        printf("Prompt generation failed.\n");
-    }
-
-    // Clean up
-    free(shell);
-
-    return EXIT_SUCCESS;
-}

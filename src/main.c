@@ -37,3 +37,33 @@
 //     free(shell);
 //     return 0;
 // }
+
+// //test
+// int main() {
+//     // Allocate memory for the shell_info structure
+//     shell = malloc(sizeof(struct shell_info));
+//     if (!shell) {
+//         fprintf(stderr, "Failed to allocate memory for shell_info\n");
+//         return EXIT_FAILURE;
+//     }
+
+//     // Initialize the shell_info structure
+//     strcpy(shell->cur_user, "test_user");
+//     strcpy(shell->cur_dir, "/home/test_user");
+//     strcpy(shell->pw_dir, "/home");
+//     shell->nbr_jobs = 3; // Example number of jobs
+
+//     // Test the prompt functionality
+//     char *prompt_output = afficher_prompt();
+//     if (prompt_output) {
+//         printf("Prompt output: %s\n", prompt_output);
+//         free(prompt_output);
+//     } else {
+//         printf("Prompt generation failed.\n");
+//     }
+
+//     // Clean up
+//     free(shell);
+
+//     return EXIT_SUCCESS;
+// }
