@@ -5,5 +5,6 @@
         "shell_info.h": "c",
         "string.h": "c",
         "types.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

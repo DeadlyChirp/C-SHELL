@@ -4,16 +4,21 @@
 #include <unistd.h>
 #include "include/command_parser.h"
 #include "include/builtins.h"
+#include "include/shell_info.h"
 
-int exec_command(char **tokens) {
+struct shell_info *shell;
+
+int exec_command(char **tokens, struct shell_info shell) {
     if (strcmp(tokens[0], "pwd") == 0) {
-        // pwd
+        //pwd
+        afficher_repertoire();
         printf("pwd\n");
         return 0;
     } else if (strcmp(tokens[0], "cd") == 0) {
         if (tokens[1] == NULL) {
             // cd
-            printf("cd\n");
+            changer_repertoire(1,NULL); 
+            //printf("cd\n");
             return 0;
         } else if (strcmp(tokens[1], "-") == 0) {
             // cd -
@@ -21,15 +26,18 @@ int exec_command(char **tokens) {
             return 0;
         } else {
             // cd <ref>
-            printf("cd <ref>\n");
+            changer_repertoire(2,tokens[1]);
+            //printf("cd <ref>\n");
             return 0;
         }
     } else if (strcmp(tokens[0], "?") == 0) {
         // ?
+        afficher_dernier_statut();
         printf("?\n");
         return 0;
     } else if (strcmp(tokens[0], "exit") == 0) {
         // exit
+        quitter_shell(2,tokens[1]);
         printf("exit\n");
         return 0;
     } else {
@@ -39,14 +47,4 @@ int exec_command(char **tokens) {
     }
     return 0;
 }
-
-// int main(void) {
-
-//     char command[] = "cd -";
-//     char *tokens[10];
-//     parse_command(command, tokens);
-//     exec_command(tokens);
-//     return 0;
-
-// }
 
