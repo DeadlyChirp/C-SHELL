@@ -3,9 +3,14 @@
 void main_loop()
 {
   char input[INPUT_SIZE];
-  char current_dir[1024];
+  //char current_dir[1024];
   char *tokens[16];
-  struct shell_info *shell;
+  struct shell_info *shell=malloc(sizeof(struct shell_info));
+
+  if (shell == NULL) {
+    perror("malloc");
+    exit(EXIT_FAILURE);
+  }
 
   do
   {
@@ -24,14 +29,14 @@ void main_loop()
     
     parse_command(input, tokens);    
 
-    exec_command(tokens, *shell);
+    exec_command(tokens);
 
     // Suppression du caractère de nouvelle ligne s'il est présent
     input[strcspn(input, "\n")] = '\0';
   } while (strcmp("exit", input));
 }
 
-int main(int argc, char **argv)
+int main()
 {
 
   // boucle principale
