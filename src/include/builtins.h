@@ -7,7 +7,7 @@
 int changer_repertoire(int argc, char **argv);
 
 // Déclaration de la fonction pour afficher le répertoire de travail actuel
-int afficher_repertoire(int argc, char **argv);
+int afficher_repertoire();
 
 // Déclaration de la fonction pour quitter le shell
 int quitter_shell(int argc, char **argv);
@@ -16,7 +16,7 @@ int quitter_shell(int argc, char **argv);
 void mise_a_jour_repertoire_courant();
 
 // Déclaration de la fonction pour afficher le dernier statut
-int afficher_dernier_statut(int argc, char **argv);
+int afficher_dernier_statut();
 
 // Ajouter d'autres déclarations de fonctions de commandes intégrées si nécessaire...
 
