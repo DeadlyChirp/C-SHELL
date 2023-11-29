@@ -47,7 +47,7 @@ char *afficher_prompt(struct shell_info *shell) {
 
     char prompt[1024];
     sprintf(prompt, "\033[32m%s\033[33m %s@%s\033[00m$ ", 
-            truncated_dir, shell->cur_user, truncated_dir);
+            truncated_dir, shell->cur_user, truncated_dir); 
 
     char *line = readline(prompt);
 
