@@ -1,0 +1,5 @@
+-Command exec:
+command exec que du txt
+ne gère pas le cas où il y a plus de token que nécessaire
+
+quand input trop grand fait plusieurs itération du programme au lieu de couper (jcrois)

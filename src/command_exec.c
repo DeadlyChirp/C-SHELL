@@ -15,6 +15,7 @@ int exec_command(char **tokens, struct shell_info shell) {
         printf("pwd\n");
         return 0;
     } else if (strcmp(tokens[0], "cd") == 0) {
+        printf("acces \n");
         if (tokens[1] == NULL) {
             // cd
             changer_repertoire(1,NULL); 
@@ -41,9 +42,13 @@ int exec_command(char **tokens, struct shell_info shell) {
         printf("exit\n");
         return 0;
     } else {
-        execvp(tokens[0], tokens);
-        perror("");
-        exit(1);
+        // Check if the file exists and is executable
+        if (access(tokens[0], X_OK) == 0) {
+            printf("execvp can be executed\n");
+            execvp(tokens[0], tokens);
+        } else {
+            printf("execvp cannot be executed\n");
+        }
     }
     return 0;
 }

@@ -6,10 +6,9 @@
 #include <limits.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "prompt.h"
-#include "shell_info.h"
+#include "include/prompt.h"
+#include "include/shell_info.h"
 
-extern struct shell_info *shell;
 
 // fonction pour tronquer le chemin du répertoire si trop long
 char *tronquer_chemin_repertoire(const char *dir, int max_length) {
@@ -30,7 +29,7 @@ char *tronquer_chemin_repertoire(const char *dir, int max_length) {
 }
 
 // fonction pour mettre à jour les informations sur le répertoire de travail actuel
-void update_cwd_info() {
+void update_cwd_info(struct shell_info *shell) {
     char temp[PATH_MAX];
     if (getcwd(temp, sizeof(temp)) != NULL) {
         strncpy(shell->cur_dir, temp, PATH_BUFSIZE - 1);
@@ -41,13 +40,14 @@ void update_cwd_info() {
 }
 
 // Fonction pour afficher le prompt du shell
-char *afficher_prompt() {
-    update_cwd_info();
+char *afficher_prompt(struct shell_info *shell) {
+    update_cwd_info(shell);
     char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
 
     char prompt[1024];
     sprintf(prompt, "\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
             shell->nbr_jobs, shell->cur_user, truncated_dir);
+
 
     char *line = readline(prompt);
 
@@ -58,3 +58,5 @@ char *afficher_prompt() {
 
     return line;
 }
+
+
