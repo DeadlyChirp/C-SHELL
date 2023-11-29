@@ -29,7 +29,7 @@ void main_loop()
     
     parse_command(input, tokens);    
 
-    exec_command(tokens);
+    shell->dernier_statut = exec_command(tokens);
 
     // Suppression du caractère de nouvelle ligne s'il est présent
     input[strcspn(input, "\n")] = '\0';
