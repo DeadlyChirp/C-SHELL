@@ -20,15 +20,10 @@ void main_loop()
     printf("Entrez commande : ");
     fgets(input, sizeof(input), stdin);
 
-    parse_command(input, tokens);
-    exec_command(tokens);
-
     
-    // pour afficher les tokens
-    //  int i;
-    //  for (i = 0; tokens[i] != NULL; i++) {
-    //    printf("Token %d: %s\n", i, tokens[i]);
-    //  }
+    parse_command(input, tokens);    
+
+    exec_command(tokens, *shell);
 
     // Suppression du caractère de nouvelle ligne s'il est présent
     input[strcspn(input, "\n")] = '\0';

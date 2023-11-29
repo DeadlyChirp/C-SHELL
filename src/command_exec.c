@@ -5,12 +5,13 @@
 #include "include/command_parser.h"
 #include "include/builtins.h"
 
-int exec_command(char **tokens) {
+int exec_command(char **tokens, struct shell_info shell) {
     if (strcmp(tokens[0], "pwd") == 0) {
         // pwd
         printf("pwd\n");
         return 0;
     } else if (strcmp(tokens[0], "cd") == 0) {
+        printf("acces \n");
         if (tokens[1] == NULL) {
             // cd
             printf("cd\n");
@@ -33,20 +34,14 @@ int exec_command(char **tokens) {
         printf("exit\n");
         return 0;
     } else {
-        execvp(tokens[0], tokens);
-        perror("");
-        exit(1);
+        // Check if the file exists and is executable
+        if (access(tokens[0], X_OK) == 0) {
+            printf("execvp can be executed\n");
+            execvp(tokens[0], tokens);
+        } else {
+            printf("execvp cannot be executed\n");
+        }
     }
     return 0;
 }
-
-// int main(void) {
-
-//     char command[] = "cd -";
-//     char *tokens[10];
-//     parse_command(command, tokens);
-//     exec_command(tokens);
-//     return 0;
-
-// }
 
