@@ -1,0 +1,3 @@
+-Command exec:
+command exec que du txt
+ne gère pas le cas où il y a plus de token que nécessaire
