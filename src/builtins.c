@@ -37,9 +37,9 @@ int afficher_repertoire(){
 // Quitte le shell "exit"
 int quitter_shell(int argc, char **argv) {
     int statut_sortie = 0;
-    if (argc > 1) {
-        statut_sortie = atoi(argv[1]);
-    }
+    // if (argc > 1) {
+    //     statut_sortie = atoi(argv[1]);
+    // }
     printf("Groupe 59: exit :  Fin du shell avec le statut %d\n", statut_sortie);
     exit(statut_sortie);
 }
