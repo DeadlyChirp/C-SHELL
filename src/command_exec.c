@@ -6,9 +6,8 @@
 #include "include/builtins.h"
 #include "include/shell_info.h"
 
-struct shell_info *shell;
 
-int exec_command(char **tokens, struct shell_info shell) {
+int exec_command(char **tokens) {
     if (strcmp(tokens[0], "pwd") == 0) {
         //pwd
         afficher_repertoire();
@@ -27,7 +26,7 @@ int exec_command(char **tokens, struct shell_info shell) {
             return 0;
         } else {
             // cd <ref>
-            changer_repertoire(2,tokens[1]);
+            changer_repertoire(2,tokens);
             //printf("cd <ref>\n");
             return 0;
         }
@@ -38,7 +37,7 @@ int exec_command(char **tokens, struct shell_info shell) {
         return 0;
     } else if (strcmp(tokens[0], "exit") == 0) {
         // exit
-        quitter_shell(2,tokens[1]);
+        quitter_shell(2,tokens);
         printf("exit\n");
         return 0;
     } else {
