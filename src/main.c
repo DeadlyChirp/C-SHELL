@@ -7,31 +7,41 @@
 
 struct shell_info *shell = NULL; 
 void main_loop() {
-  char *input;
-  char *tokens[16];
+    char *input;
+    char *tokens[16];
 
-
-  if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL) {
-    printf("repo courant : %s\n", shell->cur_dir);
-  } else {
-    perror("getcwd() error");
-  }
-
-  do {
-    input = afficher_prompt(shell);
-
-    if (input == NULL) {
-      //printf("\n");
-      break; 
+    if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL) {
+        printf("repo courant : %s\n", shell->cur_dir);
+    } else {
+        perror("getcwd() error");
     }
 
-    parse_command(input, tokens);    
-    shell->dernier_statut = exec_command(tokens);
+    while (1) {
+        input = afficher_prompt(shell);
 
-    free(input); 
-  } while (strcmp("exit", input) != 0);
+        // Break the loop if input is NULL, indicating EOF or an error
+        if (input == NULL) {
+            fprintf(stderr, "\n");
+            break;
+        }
 
+        // If input is an empty string, free it and continue
+        if (strcmp(input, "") == 0) {
+            free(input);
+            continue;
+        }
+
+        // Parse and execute the command
+        parse_command(input, tokens);
+        shell->dernier_statut = exec_command(tokens);
+
+        free(input);
+        if (strcmp(tokens[0], "exit") == 0) {
+            break;
+        }
+    }
 }
+
 
 int main() {
     shell = malloc(sizeof(struct shell_info));
