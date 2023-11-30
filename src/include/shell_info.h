@@ -4,6 +4,7 @@
 #define NBR_JOBS 20
 #define PATH_BUFSIZE 1024
 #define TOKEN_BUFSIZE 64
+#define USERNAME_BUFSIZE 64 
 #define PROJECT_NAME_SIZE 100
 
 #include "job.h"
@@ -13,7 +14,7 @@
 
 // structure 
 struct shell_info {
-    char cur_user[TOKEN_BUFSIZE]; // utilisateur courant
+    char cur_user[USERNAME_BUFSIZE]; // utilisateur courant
     char cur_dir[PATH_BUFSIZE];   // repertoire courant
     char pw_dir[PATH_BUFSIZE];    // repertoir de travail
     char prev_dir[PATH_BUFSIZE]; // repertoire precedent

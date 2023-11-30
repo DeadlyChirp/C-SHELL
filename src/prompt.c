@@ -43,21 +43,47 @@ void update_cwd_info(struct shell_info *shell) {
 
 char *afficher_prompt(struct shell_info *shell) {
     update_cwd_info(shell);
-    char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
 
-    char prompt[1024];
-    sprintf(prompt, "\033[32m%s\033[33m %s@%s\033[00m$ ", 
-            truncated_dir, shell->cur_user, truncated_dir); 
+    char *home_dir = getenv("HOME");
+    char *display_dir = shell->cur_dir;
+
+    if (home_dir && strncmp(shell->cur_dir, home_dir, strlen(home_dir)) == 0) {
+        display_dir = malloc(strlen(shell->cur_dir) - strlen(home_dir) + 2);
+        if (!display_dir) {
+            perror("Error allocating memory for display_dir");
+            exit(EXIT_FAILURE);
+        }
+        strcpy(display_dir, "~");
+        strcat(display_dir, shell->cur_dir + strlen(home_dir));
+    }
+
+    char *prompt_format = "\033[32m%s@%s:\033[33m%s\033[00m$ ";
+    int prompt_length = strlen(prompt_format) + strlen(shell->cur_user) * 2 + strlen(display_dir) + 1;
+
+    char *prompt = malloc(prompt_length);
+    if (!prompt) {
+        perror("Error allocating memory for prompt");
+        exit(EXIT_FAILURE);
+    }
+
+    snprintf(prompt, prompt_length, prompt_format, shell->cur_user, shell->cur_user, display_dir);
 
     char *line = readline(prompt);
 
-    free(truncated_dir); // Libérer la mémoire allouée par tronquer_chemin_repertoire()
     if (line && *line) {
         add_history(line);
     }
 
+    if (display_dir != shell->cur_dir) {
+        free(display_dir);
+    }
+    free(prompt);
+
     return line;
 }
+
+
+
 
 
 
