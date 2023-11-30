@@ -37,9 +37,11 @@ int exec_command(char **tokens) {
         printf("?\n");
         return 0;
     } else if (strcmp(tokens[0], "exit") == 0) {
-        // exit
-        quitter_shell(2,tokens);
-        printf("exit\n");
+        int statut_sortie = 0; 
+            if (tokens[1] != NULL) {
+                statut_sortie = atoi(tokens[1]); 
+            }
+        quitter_shell(statut_sortie);
         return 0;
     } else {
         pid_t pid = fork();

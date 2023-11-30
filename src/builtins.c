@@ -22,7 +22,7 @@ int changer_repertoire(int argc, char **argv) {
     return 0;
 }
 
-// Affiche le répertoire de travail actuel "pwd"
+// Affiche le répertoire de travail actuel "pwd" 
 int afficher_repertoire(){ 
     char cwd[PATH_BUFSIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -35,14 +35,11 @@ int afficher_repertoire(){
 }
 
 // Quitte le shell "exit"
-int quitter_shell(int argc, char **argv) {
-    int statut_sortie = 0;
-    if (argc > 1) {
-        statut_sortie = atoi(argv[1]);
-    }
-    printf("Groupe 59: exit :  Fin du shell avec le statut %d\n", statut_sortie);
+// Quitte le shell avec un statut donné
+void quitter_shell(int statut_sortie) {
     exit(statut_sortie);
 }
+
 
 // Met à jour le répertoire de travail actuel dans les informations du shell 
 void mise_a_jour_repertoire_courant() {
@@ -60,57 +57,57 @@ int afficher_dernier_statut() {
 // Ajouter d'autres fonctions de commandes internes apres
 
 
-//test 
-#include <stdbool.h>
-void test(bool condition, const char* test_name) {
-    static int passed = 0, failed = 0;
-    if (condition) {
-        printf("Test passed: %s\n", test_name);
-        passed++;
-    } else {
-        printf("Test failed: %s\n", test_name);
-        failed++;
-    }
+// //test 
+// #include <stdbool.h>
+// void test(bool condition, const char* test_name) {
+//     static int passed = 0, failed = 0;
+//     if (condition) {
+//         printf("Test passed: %s\n", test_name);
+//         passed++;
+//     } else {
+//         printf("Test failed: %s\n", test_name);
+//         failed++;
+//     }
 
-    if (test_name == NULL) {  // End of tests
-        printf("\nTotal tests: %d, Passed: %d, Failed: %d\n", passed + failed, passed, failed);
-    }
-}
+//     if (test_name == NULL) {  // End of tests
+//         printf("\nTotal tests: %d, Passed: %d, Failed: %d\n", passed + failed, passed, failed);
+//     }
+// }
 
-void test_changer_repertoire() {
-    char original_dir[PATH_BUFSIZE];
-    getcwd(original_dir, sizeof(original_dir));
+// void test_changer_repertoire() {
+//     char original_dir[PATH_BUFSIZE];
+//     getcwd(original_dir, sizeof(original_dir));
 
-    // Test changing to a valid directory
-    test(changer_repertoire(1, (char *[]){"cd", "/tmp"}) == 0, "Change to /tmp");
+//     // Test changing to a valid directory
+//     test(changer_repertoire(1, (char *[]){"cd", "/tmp"}) == 0, "Change to /tmp");
 
-    // Test changing back to original directory
-    test(changer_repertoire(1, (char *[]){"cd", original_dir}) == 0, "Change back to original directory");
+//     // Test changing back to original directory
+//     test(changer_repertoire(1, (char *[]){"cd", original_dir}) == 0, "Change back to original directory");
 
-    // Test changing to an invalid directory
-    //test(changer_repertoire(2, (char *[]){"cd", "/nonexistentdirectory"}) != 0, "Change to invalid directory");
-}
+//     // Test changing to an invalid directory
+//     //test(changer_repertoire(2, (char *[]){"cd", "/nonexistentdirectory"}) != 0, "Change to invalid directory");
+// }
 
-void test_afficher_repertoire() {
-    // Test if the function prints the current directory (manual verification required)
-    test(afficher_repertoire() == 0, "Print current directory");
-}
+// void test_afficher_repertoire() {
+//     // Test if the function prints the current directory (manual verification required)
+//     test(afficher_repertoire() == 0, "Print current directory");
+// }
 
-void test_quitter_shell() {
-    // This function exits the program, so it's tricky to test it in a normal way.
-    // You can comment out the actual `exit` call in quitter_shell for testing purposes.
-    test(quitter_shell(2, (char *[]){"exit", "0"}) == 0, "Exit with status 0");
-}
+// void test_quitter_shell() {
+//     // This function exits the program, so it's tricky to test it in a normal way.
+//     // You can comment out the actual `exit` call in quitter_shell for testing purposes.
+//     test(quitter_shell(2, (char *[]){"exit", "0"}) == 0, "Exit with status 0");
+// }
 
-void test_afficher_dernier_statut() {
-    // Assume the last status is set to 0
-    shell->dernier_statut = 0;
-    printf("Expected output for last status 0: 'Valeur de retour de la dernière commande : 0'\n");
-    test(afficher_dernier_statut() == 0, "Display last status 0");
+// void test_afficher_dernier_statut() {
+//     // Assume the last status is set to 0
+//     shell->dernier_statut = 0;
+//     printf("Expected output for last status 0: 'Valeur de retour de la dernière commande : 0'\n");
+//     test(afficher_dernier_statut() == 0, "Display last status 0");
 
-    // Change the last status and test again
-    shell->dernier_statut = 1;
-    printf("Expected output for last status 1: 'Valeur de retour de la dernière commande : 1'\n");
-    test(afficher_dernier_statut() == 0, "Display last status 1");
-}
+//     // Change the last status and test again
+//     shell->dernier_statut = 1;
+//     printf("Expected output for last status 1: 'Valeur de retour de la dernière commande : 1'\n");
+//     test(afficher_dernier_statut() == 0, "Display last status 1");
+// }
 
