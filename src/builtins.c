@@ -4,7 +4,6 @@
 #include "include/shell_info.h"
 #include "include/builtins.h"
 
-struct shell_info *shell;
 
 // builtins.c sert à implémenter les commandes internes du shell
 
