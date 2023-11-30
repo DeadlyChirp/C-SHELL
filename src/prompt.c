@@ -10,23 +10,23 @@
 #include "include/shell_info.h"
 
 
-// fonction pour tronquer le chemin du répertoire si trop long
-char *tronquer_chemin_repertoire(const char *dir, int max_length) {
-    int dir_len = strlen(dir);
-    if (dir_len <= max_length) {
-        return strdup(dir);  // strdup() alloue de la mémoire pour la chaîne de caractères
-    }
+// // fonction pour tronquer le chemin du répertoire si trop long
+// char *tronquer_chemin_repertoire(const char *dir, int max_length) {
+//     int dir_len = strlen(dir);
+//     if (dir_len <= max_length) {
+//         return strdup(dir);  // strdup() alloue de la mémoire pour la chaîne de caractères
+//     }
 
-    char *truncated = malloc(max_length + 1);
-    if (!truncated) {
-        perror("Error allocating memory");
-        exit(EXIT_FAILURE);
-    }
+//     char *truncated = malloc(max_length + 1);
+//     if (!truncated) {
+//         perror("Error allocating memory");
+//         exit(EXIT_FAILURE);
+//     }
 
-    // Creer une chaine de caractères tronquée
-    sprintf(truncated, "...%s", dir + dir_len - max_length + 3);
-    return truncated;
-}
+//     // Creer une chaine de caractères tronquée
+//     sprintf(truncated, "...%s", dir + dir_len - max_length + 3);
+//     return truncated;
+// }
 
 // fonction pour mettre à jour les informations sur le répertoire de travail actuel
 void update_cwd_info(struct shell_info *shell) {
