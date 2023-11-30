@@ -10,17 +10,27 @@ struct shell_info *shell;
 
 // Change le répertoire de travail actuel "cd"
 int changer_repertoire(int argc, char **argv) {
-    if (argc == 1) { //cd
-        chdir(shell->pw_dir);
-    } else {
-        if (chdir(argv[1]) != 0) { //cd <ref> 
-            fprintf(stderr, "cd: Impossible de changer pour le répertoire '%s'\n", argv[1]);
-            return 1;
-        }
+    char temp[PATH_BUFSIZE];
+    strncpy(temp, shell->cur_dir, PATH_BUFSIZE);  // enregistrer le répertoire courant
+
+    // Determine target directory
+    char *target_dir = (argc == 1) ? shell->pw_dir :  // si pas d'argument, aller au répertoire personnel
+                      (strcmp(argv[1], "-") == 0) ? shell->prev_dir :  // si ya -, aller au répertoire précédent
+                      argv[1];  // sinon, aller au répertoire spécifié
+
+    // Attempt to change directory
+    if (chdir(target_dir) != 0) {
+        perror("cd: Erreur lors du changement de répertoire");
+        return 1;
     }
-    mise_a_jour_repertoire_courant();
+
+    strncpy(shell->prev_dir, temp, PATH_BUFSIZE);  // mettre à jour le répertoire précédent
+    mise_a_jour_repertoire_courant();  // mettre à jour le répertoire courant
+
     return 0;
 }
+
+
 
 
 // Affiche le répertoire de travail actuel "pwd" 

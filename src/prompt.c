@@ -57,8 +57,8 @@ char *afficher_prompt(struct shell_info *shell) {
         strcat(display_dir, shell->cur_dir + strlen(home_dir));
     }
 
-    char *prompt_format = "\033[32m%s@%s:\033[33m%s\033[00m$ ";
-    int prompt_length = strlen(prompt_format) + strlen(shell->cur_user) * 2 + strlen(display_dir) + 1;
+    char *prompt_format = "\033[32m%s\033[32m@%s:\033[33m%s\033[00m$ ";
+    int prompt_length = strlen(prompt_format) - 6 + strlen(shell->cur_user) + strlen(shell->cur_user) + strlen(display_dir) + 1;
 
     char *prompt = malloc(prompt_length);
     if (!prompt) {
