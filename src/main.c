@@ -39,20 +39,8 @@ int main() {
         perror("malloc");
         return EXIT_FAILURE;
     }
-    //initialiser le nom de l'utilisateur
-     char *username = getlogin();
-    if (!username) {
-        struct passwd *pw = getpwuid(geteuid()); // getpwuid() retourne un pointeur sur une structure statique contenant les informations de l'utilisateur
-        if (pw) {
-            username = pw->pw_name; // pw_name est le nom d'utilisateur
-        } else {
-            fprintf(stderr, "Erreur lors de l'obtention du nom d'utilisateur\n");
-            username = "unknown";
-        }
-    }
-    strncpy(shell->cur_user, username, USERNAME_BUFSIZE);
-    shell->cur_user[USERNAME_BUFSIZE - 1] = '\0';
 
+  
     //inittialiser le repertoire HOME pour cd tout seul 
     char *home_dir = getenv("HOME"); // getenv() retourne la valeur de la variable d'environnement
     if (home_dir) {

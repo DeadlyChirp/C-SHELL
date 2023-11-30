@@ -19,7 +19,7 @@ int changer_repertoire(int argc, char **argv) {
 
     // Attempt to change directory
     if (chdir(target_dir) != 0) {
-        perror("cd: Erreur lors du changement de répertoire");
+        perror("bash: cd: NONEXISTENT");
         return 1;
     }
 
