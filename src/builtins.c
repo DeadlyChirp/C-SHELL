@@ -53,13 +53,8 @@ void mise_a_jour_repertoire_courant() {
 
 // fonction pour afficher le dernier statut "?"
 int afficher_dernier_statut() {
-    if (shell == NULL) {
-        fprintf(stderr, "Erreur. shell n'est pas initialise\n");
-        return -1; // Or some error code that makes sense in your context
-    }
-
-    printf("Valeur de retour de la dernière commande : %d\n", shell->dernier_statut);
-    return 0;
+   printf("Valeur de retour de la dernière commande : %d\n", shell->dernier_statut);
+return 0;
 }
 
 // Ajouter d'autres fonctions de commandes internes apres
