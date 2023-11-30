@@ -5,13 +5,14 @@
 #include "include/command_parser.h"
 #include "include/builtins.h"
 #include "include/shell_info.h"
+#include "sys/wait.h"
 
 
 int exec_command(char **tokens) {
     if (strcmp(tokens[0], "pwd") == 0) {
         //pwd
         afficher_repertoire();
-        printf("pwd\n");
+        //printf("pwd\n");
         return 0;
     } else if (strcmp(tokens[0], "cd") == 0) {
         printf("acces \n");
@@ -41,12 +42,20 @@ int exec_command(char **tokens) {
         printf("exit\n");
         return 0;
     } else {
-        // Check if the file exists and is executable
-        if (access(tokens[0], X_OK) == 0) {
-            printf("execvp can be executed\n");
+        pid_t pid = fork();
+
+        if (pid == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        } else if (pid == 0) {
+            // processus enfant 
             execvp(tokens[0], tokens);
+            perror("execvp");
+            exit(EXIT_FAILURE);
         } else {
-            printf("execvp cannot be executed\n");
+            // Processus parent
+            int status;
+            waitpid(pid, &status, 0);
         }
     }
     return 0;
