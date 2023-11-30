@@ -40,23 +40,24 @@ void update_cwd_info(struct shell_info *shell) {
 }
 
 // Fonction pour afficher le prompt du shell
+
 char *afficher_prompt(struct shell_info *shell) {
     update_cwd_info(shell);
     char *truncated_dir = tronquer_chemin_repertoire(shell->cur_dir, 20);
 
     char prompt[1024];
-    sprintf(prompt, "\033[32m" "\001[%d]\002\033[33m" "\001 %s@%s\002\033[00m$ ", 
-            shell->nbr_jobs, shell->cur_user, truncated_dir);
-
+    sprintf(prompt, "\033[32m%s\033[33m %s@%s\033[00m$ ", 
+            truncated_dir, shell->cur_user, truncated_dir); 
 
     char *line = readline(prompt);
 
-    free(truncated_dir);  // Libérer la mémoire allouée par tronquer_chemin_repertoire()
+    free(truncated_dir); // Libérer la mémoire allouée par tronquer_chemin_repertoire()
     if (line && *line) {
         add_history(line);
     }
 
     return line;
 }
+
 
 
