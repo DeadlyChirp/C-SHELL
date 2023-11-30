@@ -1,46 +1,48 @@
 #include "include/main.h"
+#include "include/shell_info.h" // Make sure this is included if it's not already in main.h
 
-void main_loop()
-{
-  char input[INPUT_SIZE];
-  //char current_dir[1024];
+struct shell_info *shell = NULL; // Declare the global shell pointer
+
+void main_loop() {
+  char *input;
   char *tokens[16];
-  struct shell_info *shell=malloc(sizeof(struct shell_info));
 
-  if (shell == NULL) {
-    perror("malloc");
-    exit(EXIT_FAILURE);
+  // Do not re-declare shell here, use the global shell pointer
+
+  if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL) {
+    printf("repo courant : %s\n", shell->cur_dir);
+  } else {
+    perror("getcwd() error");
   }
 
-  do
-  {
-    // initialise le répertoire courant
-    shell = malloc(sizeof(PATH_BUFSIZE));
-    if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL){
-      printf("repo courant : %s\n", shell->cur_dir);
-    }
-    else{
-       perror("getcwd() error");
+  do {
+    input = afficher_prompt(shell);
+
+    if (input == NULL) {
+      printf("\n");
+      break; // Exit the loop if input is NULL (EOF or Ctrl-D)
     }
 
-    printf("Entrez commande : ");
-    fgets(input, INPUT_SIZE, stdin);
-
-    
     parse_command(input, tokens);    
-
     shell->dernier_statut = exec_command(tokens);
 
-    // Suppression du caractère de nouvelle ligne s'il est présent
-    input[strcspn(input, "\n")] = '\0';
-  } while (strcmp("exit", input));
+    free(input); // Free the memory allocated by readline in afficher_prompt
+  } while (strcmp("exit", input) != 0);
+
+  // Do not free shell here, it will be freed in main
 }
 
-int main()
-{
+int main() {
+  shell = malloc(sizeof(struct shell_info)); // Allocate memory for the shell
+  if (shell == NULL) {
+    perror("malloc");
+    return EXIT_FAILURE;
+  }
 
-  // boucle principale
-  main_loop();
+  // Initialize the shell fields here
 
+  main_loop(); // Call the main loop
+
+  free(shell); // Free the shell structure at the end
   return EXIT_SUCCESS;
 }

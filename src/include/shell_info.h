@@ -23,4 +23,8 @@ struct shell_info {
     int dernier_statut; // dernier statut
 };
 
+// In shell_info.h
+extern struct shell_info *shell;
+
+
 #endif // SHELL_INFO_H
