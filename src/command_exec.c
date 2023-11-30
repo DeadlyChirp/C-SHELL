@@ -30,16 +30,19 @@ int exec_command(char **tokens) {
         // ?
         shell->dernier_statut = afficher_dernier_statut();
         // return 0;
-    } else if (strcmp(tokens[0], "exit") == 0) {
-            if (tokens[1] != NULL) {
-                shell->dernier_statut = atoi(tokens[1]);
-            }else {
-            shell->dernier_statut = shell->dernier_statut;
-            }
-        quitter_shell(shell->dernier_statut);
-        
-    
+    } else  if (strcmp(tokens[0], "exit") == 0) {
+    int exit_status = shell->dernier_statut; // Default to the last command's status
+    if (tokens[1] != NULL) {
+        exit_status = atoi(tokens[1]); // Override if an argument is provided
+    }
+
+    if (shell->nbr_jobs > 0) {
+        fprintf(stderr, "There are jobs still running or suspended.\n");
+        shell->dernier_statut = 1; // Update the status, but don't exit yet
     } else {
+        exit(exit_status); // Exit the shell with the specified status
+    }
+}else {
         pid_t pid = fork();
 
         if (pid == -1) {

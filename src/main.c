@@ -19,26 +19,23 @@ void main_loop() {
     while (1) {
         input = afficher_prompt(shell);
 
-        // Break the loop if input is NULL, indicating EOF or an error
+        // si l'entrée est NULL, cela signifie que l'utilisateur a appuyé sur Ctrl + D
         if (input == NULL) {
-            fprintf(stderr, "\n");
-            break;
+            exit(shell->dernier_statut);  // Exit with the last command's status when input is NULL
         }
 
-        // If input is an empty string, free it and continue
+        // si l'entrée est vide, continuez
         if (strcmp(input, "") == 0) {
             free(input);
             continue;
         }
 
-        // Parse and execute the command
+        
         parse_command(input, tokens);
         shell->dernier_statut = exec_command(tokens);
 
         free(input);
-        if (strcmp(tokens[0], "exit") == 0) {
-            break;
-        }
+        
     }
 }
 

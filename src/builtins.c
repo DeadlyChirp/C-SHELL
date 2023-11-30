@@ -46,8 +46,8 @@ int afficher_repertoire(){
 
 // Quitte le shell "exit"
 // Quitte le shell avec un statut donné
-void quitter_shell(int statut_sortie) {
-    exit(statut_sortie);
+void quitter_shell(int statut) {
+    exit(statut);
 }
 
 
