@@ -28,7 +28,6 @@ int exec_command(char **tokens) {
         }
     } else if (strcmp(tokens[0], "?") == 0) {
         // ?
-        printf("?\n");
         shell->dernier_statut = afficher_dernier_statut();
         // return 0;
     } else if (strcmp(tokens[0], "exit") == 0) {

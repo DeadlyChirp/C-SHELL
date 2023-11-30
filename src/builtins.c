@@ -62,7 +62,7 @@ void mise_a_jour_repertoire_courant() {
 
 // fonction pour afficher le dernier statut "?"
 int afficher_dernier_statut() {
-   printf("Valeur de retour de la dernière commande : %d\n", shell->dernier_statut);
+   printf("%d\n", shell->dernier_statut);
 return 0;
 }
 
