@@ -15,20 +15,21 @@ void main_loop()
   do
   {
     // initialise le répertoire courant
-    if (getcwd(shell->cur_dir, sizeof(shell->cur_dir)) != NULL){
+    shell = malloc(sizeof(PATH_BUFSIZE));
+    if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL){
       printf("repo courant : %s\n", shell->cur_dir);
     }
     else{
-      perror("getcwd");
+       perror("getcwd() error");
     }
 
     printf("Entrez commande : ");
-    fgets(input, sizeof(input), stdin);
+    fgets(input, INPUT_SIZE, stdin);
 
     
     parse_command(input, tokens);    
 
-    exec_command(tokens);
+    shell->dernier_statut = exec_command(tokens);
 
     // Suppression du caractère de nouvelle ligne s'il est présent
     input[strcspn(input, "\n")] = '\0';
