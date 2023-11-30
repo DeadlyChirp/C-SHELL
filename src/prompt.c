@@ -59,7 +59,6 @@ char *afficher_prompt(struct shell_info *shell) {
 
     char *prompt_format = "\033[32m%s\033[32m@%s:\033[33m%s\033[00m$ ";
     int prompt_length = strlen(prompt_format) - 6 + strlen(shell->cur_user) + strlen(shell->cur_user) + strlen(display_dir) + 1;
-
     char *prompt = malloc(prompt_length);
     if (!prompt) {
         perror("Error allocating memory for prompt");
@@ -68,7 +67,11 @@ char *afficher_prompt(struct shell_info *shell) {
 
     snprintf(prompt, prompt_length, prompt_format, shell->cur_user, shell->cur_user, display_dir);
 
-    char *line = readline(prompt);
+    // Print the prompt to stderr
+    fprintf(stderr, "%s", prompt);
+
+    // Use readline to read the input from stdin
+    char *line = readline("");
 
     if (line && *line) {
         add_history(line);
