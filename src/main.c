@@ -46,7 +46,8 @@ int main() {
         perror("malloc");
         return EXIT_FAILURE;
     }
-
+    
+    memset(shell, 0, sizeof(struct shell_info)); 
   
     //inittialiser le repertoire HOME pour cd tout seul 
     char *home_dir = getenv("HOME"); // getenv() retourne la valeur de la variable d'environnement
