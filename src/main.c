@@ -21,7 +21,7 @@ void main_loop() {
 
         // si l'entrée est NULL, cela signifie que l'utilisateur a appuyé sur Ctrl + D
         if (input == NULL) {
-            exit(shell->dernier_statut);  // Exit with the last command's status when input is NULL
+            exit(shell->dernier_statut);  // Exit le shell avec le statut donné (dernier statut enregistré)
         }
 
         // si l'entrée est vide, continuez
@@ -46,8 +46,8 @@ int main() {
         perror("malloc");
         return EXIT_FAILURE;
     }
-    
-    memset(shell, 0, sizeof(struct shell_info)); 
+
+    memset(shell, 0, sizeof(struct shell_info)); //Initialisation de la mémoire à 0
   
     //inittialiser le repertoire HOME pour cd tout seul 
     char *home_dir = getenv("HOME"); // getenv() retourne la valeur de la variable d'environnement

@@ -12,12 +12,12 @@ int changer_repertoire(int argc, char **argv) {
     char temp[PATH_BUFSIZE];
     strncpy(temp, shell->cur_dir, PATH_BUFSIZE);  // enregistrer le répertoire courant
 
-    // Determine target directory
+    // détermine les commandes
     char *target_dir = (argc == 1) ? shell->pw_dir :  // si pas d'argument, aller au répertoire personnel
                       (strcmp(argv[1], "-") == 0) ? shell->prev_dir :  // si ya -, aller au répertoire précédent
                       argv[1];  // sinon, aller au répertoire spécifié
 
-    // Attempt to change directory
+    // change le répertoire de travail actuel
     if (chdir(target_dir) != 0) {
         perror("bash: cd: NONEXISTENT");
         return 1;
@@ -44,7 +44,6 @@ int afficher_repertoire(){
     return 0;
 }
 
-// Quitte le shell "exit"
 // Quitte le shell avec un statut donné
 void quitter_shell(int statut) {
     exit(statut);
@@ -56,7 +55,6 @@ void mise_a_jour_repertoire_courant() {
      if (getcwd(shell->cur_dir, PATH_BUFSIZE) == NULL) {
         perror("Erreur mise_a_jour_repertoire_courant");
     }
-    // getcwd(shell->cur_dir, PATH_BUFSIZE);
 }
 
 

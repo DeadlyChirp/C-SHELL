@@ -31,16 +31,16 @@ int exec_command(char **tokens) {
         shell->dernier_statut = afficher_dernier_statut();
         // return 0;
     } else  if (strcmp(tokens[0], "exit") == 0) {
-    int exit_status = shell->dernier_statut; // Default to the last command's status
+    int exit_status = shell->dernier_statut; // exit avec le statut de la dernière commande 
     if (tokens[1] != NULL) {
-        exit_status = atoi(tokens[1]); // Override if an argument is provided
+        exit_status = atoi(tokens[1]); // Override si un argument est fourni
     }
 
     if (shell->nbr_jobs > 0) {
         fprintf(stderr, "There are jobs still running or suspended.\n");
-        shell->dernier_statut = 1; // Update the status, but don't exit yet
+        shell->dernier_statut = 1; // met à jour le statut sans quitter
     } else {
-        exit(exit_status); // Exit the shell with the specified status
+        exit(exit_status); // Exit le shell avec le statut donné
     }
 }else {
         pid_t pid = fork();

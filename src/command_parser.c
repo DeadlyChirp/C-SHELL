@@ -18,7 +18,7 @@ int parse_command(char *command, char **tokens) {
     // for (j = 0; tokens[j] != NULL; j++) {
     //   printf("Token %d: %s\n", j, tokens[j]);
     //   tokens[j][strcspn(tokens[j], "\n")] = '\0';
-    // }
+    // } 
     return 0;
 }
 
