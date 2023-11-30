@@ -15,7 +15,6 @@ int exec_command(char **tokens) {
         shell->dernier_statut = afficher_repertoire();
         //printf("pwd\n");
     } else if (strcmp(tokens[0], "cd") == 0) {
-        printf("acces \n");
         if (tokens[1] == NULL) {
             // cd 
             shell->dernier_statut = changer_repertoire(1, tokens); 

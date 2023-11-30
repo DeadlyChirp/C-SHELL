@@ -36,7 +36,7 @@ int changer_repertoire(int argc, char **argv) {
 int afficher_repertoire(){ 
     char cwd[PATH_BUFSIZE];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("Répertoire actuel: %s\n", cwd);
+        printf("%s\n", cwd);
     } else {
         perror("pwd: Erreur lors de l'obtention du répertoire");
         return 1;

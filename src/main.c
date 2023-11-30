@@ -21,7 +21,7 @@ void main_loop() {
     input = afficher_prompt(shell);
 
     if (input == NULL) {
-      printf("\n");
+      //printf("\n");
       break; 
     }
 

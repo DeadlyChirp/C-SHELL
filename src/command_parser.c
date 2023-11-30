@@ -14,11 +14,11 @@ int parse_command(char *command, char **tokens) {
     tokens[i] = NULL; // on termine le tableau de tokens par NULL
 
     // pour afficher les tokens et enlever \0 à la fin de chaque folen
-    int j;
-    for (j = 0; tokens[j] != NULL; j++) {
-      printf("Token %d: %s\n", j, tokens[j]);
-      tokens[j][strcspn(tokens[j], "\n")] = '\0';
-    }
+    // int j;
+    // for (j = 0; tokens[j] != NULL; j++) {
+    //   printf("Token %d: %s\n", j, tokens[j]);
+    //   tokens[j][strcspn(tokens[j], "\n")] = '\0';
+    // }
     return 0;
 }
 
