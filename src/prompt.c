@@ -54,7 +54,7 @@ char *afficher_prompt(struct shell_info *shell) {
     update_cwd_info(shell);
 
     // Tronquer le chemin si nécessaire
-    char *display_dir = tronquer_chemin_repertoire(shell->cur_dir, 30); // 30 caractères maximum
+    char *display_dir = tronquer_chemin_repertoire(shell->cur_dir, 25); // 30 caractères maximum
 
     // Obtenir le nombre de jobs actuellement gérés par le shell
     int job_count = shell->nbr_jobs; // Supposons que nbr_jobs est à jour

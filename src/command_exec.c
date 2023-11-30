@@ -35,9 +35,10 @@ int exec_command(char **tokens) {
             if (tokens[1] != NULL) {
                 shell->dernier_statut = atoi(tokens[1]);
             }else {
-            shell->dernier_statut = 0;
-        }
+            shell->dernier_statut = shell->dernier_statut;
+            }
         quitter_shell(shell->dernier_statut);
+        
     
     } else {
         pid_t pid = fork();
