@@ -50,6 +50,7 @@ void update_cwd_info(struct shell_info *shell) {
 
 // Fonction pour afficher le prompt du shell
 
+// Fonction pour afficher le prompt du shell
 char *afficher_prompt(struct shell_info *shell) {
     update_cwd_info(shell);
 
@@ -59,9 +60,9 @@ char *afficher_prompt(struct shell_info *shell) {
     // Obtenir le nombre de jobs actuellement gérés par le shell
     int job_count = shell->nbr_jobs; // Supposons que nbr_jobs est à jour
 
-    // Prépare le format du prompt avec le nombre de jobs et le chemin tronqué
-    char *prompt_format = "\033[32m[%d]%s%s\033[33m%s\033[00m$ ";
-    int prompt_length = snprintf(NULL, 0, prompt_format, job_count, shell->cur_user, shell->cur_user, display_dir) + 1; // +1 pour le caractère nul de fin
+    // Modifier le format du prompt pour inclure le nombre de jobs
+    char *prompt_format = "\033[32m[%d]\033[34m%s\033[00m$ ";
+    int prompt_length = snprintf(NULL, 0, prompt_format, job_count, display_dir) + 1; // +1 pour le caractère nul de fin
     char *prompt = malloc(prompt_length);
     if (!prompt) {
         perror("Error allocating memory for prompt");
@@ -69,12 +70,12 @@ char *afficher_prompt(struct shell_info *shell) {
     }
 
     // Construction du prompt
-    snprintf(prompt, prompt_length, prompt_format, job_count, shell->cur_user, shell->cur_user, display_dir);
+    snprintf(prompt, prompt_length, prompt_format, job_count, display_dir);
 
-    // affichage du prompt sur sortie d'erreur standard
+    // Affichage du prompt sur sortie d'erreur standard
     fprintf(stderr, "%s", prompt);
 
-    // lecture de la ligne de commande sans afficher le prompt (car déjà fait)
+    // Lecture de la ligne de commande sans afficher le prompt (car déjà fait)
     char *line = readline("");
 
     // Ajout de la ligne à l'historique si elle n'est pas vide
