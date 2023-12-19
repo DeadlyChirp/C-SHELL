@@ -1,40 +1,66 @@
 #include "include/main.h"
+#include "include/shell_info.h" 
 
-void main_loop()
-{
-  char input[INPUT_SIZE];
-  char current_dir[1024];
-  char *tokens[16];
-  struct shell_info *shell;
 
-  do
-  {
-    // initialise le répertoire courant
-    if (getcwd(shell->cur_dir, sizeof(shell->cur_dir)) != NULL){
-      printf("repo courant : %s\n", shell->cur_dir);
+#include <unistd.h>  
+#include <pwd.h> 
+
+struct shell_info *shell = NULL; 
+void main_loop() {
+    char *input;
+    char *tokens[16];
+
+    if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL) {
+        printf("repo courant : %s\n", shell->cur_dir);
+    } else {
+        perror("getcwd() error");
     }
-    else{
-      perror("getcwd");
+
+    while (1) {
+        input = afficher_prompt(shell);
+
+        // si l'entrée est NULL, cela signifie que l'utilisateur a appuyé sur Ctrl + D
+        if (input == NULL) {
+            exit(shell->dernier_statut);  // Exit le shell avec le statut donné (dernier statut enregistré)
+        }
+
+        // si l'entrée est vide, continuez
+        if (strcmp(input, "") == 0) {
+            free(input);
+            continue;
+        }
+
+        
+        parse_command(input, tokens);
+        shell->dernier_statut = exec_command(tokens);
+
+        free(input);
+        
     }
-
-    printf("Entrez commande : ");
-    fgets(input, sizeof(input), stdin);
-
-    
-    parse_command(input, tokens);    
-
-    exec_command(tokens, *shell);
-
-    // Suppression du caractère de nouvelle ligne s'il est présent
-    input[strcspn(input, "\n")] = '\0';
-  } while (strcmp("exit", input));
 }
 
-int main(int argc, char **argv)
-{
 
-  // boucle principale
-  main_loop();
+int main() {
+    shell = malloc(sizeof(struct shell_info));
+    if (shell == NULL) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
 
-  return EXIT_SUCCESS;
+    memset(shell, 0, sizeof(struct shell_info)); //Initialisation de la mémoire à 0
+  
+    //inittialiser le repertoire HOME pour cd tout seul 
+    char *home_dir = getenv("HOME"); // getenv() retourne la valeur de la variable d'environnement
+    if (home_dir) {
+        strncpy(shell->pw_dir, home_dir, PATH_BUFSIZE);
+        shell->pw_dir[PATH_BUFSIZE - 1] = '\0'; // assurer que la chaîne est terminée par un caractère nul
+    } else {
+        fprintf(stderr, "Erreur lors de l'obtention du répertoire personnel\n");
+        strcpy(shell->pw_dir, "/"); // default est le répertoire racine si HOME n'est pas défini
+    }
+
+    main_loop();
+
+    free(shell);
+    return EXIT_SUCCESS;
 }

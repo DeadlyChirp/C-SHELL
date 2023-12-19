@@ -10,7 +10,7 @@ int changer_repertoire(int argc, char **argv);
 int afficher_repertoire();
 
 // Déclaration de la fonction pour quitter le shell
-int quitter_shell(int argc, char **argv);
+void quitter_shell(int statut);
 
 // Déclaration de la fonction pour mettre à jour le répertoire de travail actuel
 void mise_a_jour_repertoire_courant();

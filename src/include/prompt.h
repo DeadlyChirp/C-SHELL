@@ -14,7 +14,7 @@
 // declaration de la fonction pour afficher le prompt du shell
 char *afficher_prompt();
 
-// declaration de la fonction pour mettre à jour les informations sur le répertoire de travail actuel
+// // declaration de la fonction pour mettre à jour les informations sur le répertoire de travail actuel
 void update_cwd_info();
 
 // declaration de la fonction pour tronquer le chemin du répertoire si trop long
