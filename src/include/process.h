@@ -11,10 +11,7 @@ struct process {
     char **argv; // tableau des arguments
     char *input_path; // chemin du fichier d'entrée
     char *output_path; // chemin du fichier de sortie
-    pid_t pid; // process id
-    int type; // type de processus
-    int status; // status du processus
-    struct process *next; // pointeur vers le processus suivant
+    int pid; // process id
 };
 
 #endif // PROCESS_H

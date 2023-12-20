@@ -6,11 +6,14 @@
 
 // Definition of the job structure
 struct job {
-    int id;
-    struct process *root; // pointer vers le processus racine de la liste des processus
+    int bg; // 0 = foreground, 1 = background 
+    int id; //numero du job
+    pid_t pgid; // process group id
+    int etat; // done/running/stopped = 0/1/2
     char *command; // commande du job
-    pid_t pgid; // group id du job
-    int mode; // mode du job
+    struct job *root; // pointer vers le processus racine de la liste des processus
+    struct job *next; 
+    struct process *processes; // tableau des processus
 };
 
 #endif // JOB_H
