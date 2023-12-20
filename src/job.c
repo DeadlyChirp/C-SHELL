@@ -75,5 +75,5 @@ int init_job(struct process *processes, struct shell_info *shell, int array_size
 }
 
 struct process *init_process(char *command, int argc, char **argv, char *iputPath, char *outputPath){
-    
+    return 0;
 }
