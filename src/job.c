@@ -75,5 +75,17 @@ int init_job(struct process *processes, struct shell_info *shell, int array_size
 }
 
 struct process *init_process(char *command, int argc, char **argv, char *iputPath, char *outputPath){
+     pid_t pid = fork();
+
+    if (pid < 0) {
+        // The fork failed.
+        return NULL;
+    } else if (pid == 0) {
+        // Tchild process
+        // exec()?
+    } else {
+        // parent process
+    }
+
     return 0;
 }
