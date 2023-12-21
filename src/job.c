@@ -47,85 +47,96 @@ int get_last_process_id(struct shell_info *shell)
 }
 
 // liste tous les jobs
-int list_jobs(struct job *jobs)
-{
-    if (jobs->root != NULL)
-    {
-        jobs = jobs->root;
-    }
-    else
-    {
-        printf("Pas de jobs root\n");
+int list_jobs(struct job *jobs) {
+    if (!jobs) {
+        printf("No jobs\n");
         return 1;
     }
 
-    printf("ID\tID\tetat\tcommande\n");
-    do
-    {
-        printf("%d\t%d\t%d\t%s\n",
-               jobs->id,
-               jobs->id,
-               jobs->etat,
-               jobs->command);
-    } while (jobs->next != NULL);
-
+    struct job *current_job = jobs;
+    printf("ID\tStatus\tCommand\n");
+    while (current_job != NULL) {
+        printf("%d\t%s\t%s\n",
+               current_job->id,
+               (current_job->etat == 1 ? "Running" : "Done"),
+               current_job->command);
+        current_job = current_job->next;
+    }
     return 0;
 }
+
 
 // je pensais faire un job "racine" pour jsh mais trop relou wola
 
 // ajoute un job à la liste des jobs
-int init_job(char **commands, struct shell_info *shell, int bg, int status)
-{
-    if (commands == NULL)
-    {
+int init_job(char **commands, struct shell_info *shell, int bg, int status) {
+    if (commands == NULL) {
         fprintf(stderr, "Error: commands is NULL\n");
         return EXIT_FAILURE;
     }
 
-    if (shell == NULL)
-    {
+    if (shell == NULL) {
         fprintf(stderr, "Error: shell is NULL\n");
         return EXIT_FAILURE;
     }
 
     struct job *job = malloc(sizeof(struct job));
-    if (job == NULL)
-    {
+    if (job == NULL) {
         perror("malloc");
         return EXIT_FAILURE;
     }
 
-    if (shell->last != NULL || shell->root != NULL)
-    {
-        job->root = shell->root;
-        job->next = NULL;
-        job->id = shell->last->id + 1;
-        job->etat = 1; // running
-        job->bg = bg;
+    // Assign the job ID correctly
+    job->id = shell->last ? shell->last->id + 1 : 1;
+
+    job->command = strdup(commands[0]); // Ensure you copy the command
+    job->etat = 1; // running
+    job->bg = bg;
+    job->next = NULL;
+
+     if (shell->last != NULL) {
         shell->last->next = job;
-        shell->last = job;
-    }
-    else
-    {
-        job->root = job;
-        job->next = NULL;
-        job->id = 1;
-        job->etat = 1; // running
-        job->bg = bg;
+    } else {
         shell->root = job;
-        shell->last = job;
     }
+    shell->last = job;
+
+    // Increment job count
+    shell->nbr_jobs++;
+
+      size_t command_length = 0;
+    for (char **arg = commands; *arg != NULL; arg++) {
+        command_length += strlen(*arg) + 1; // +1 for space or null terminator
+    }
+
+    char *full_command = malloc(command_length);
+    if (!full_command) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+
+    full_command[0] = '\0'; // Initialize the string
+    for (char **arg = commands; *arg != NULL; arg++) {
+        strcat(full_command, *arg);
+        if (*(arg + 1) != NULL) {
+            strcat(full_command, " "); // Add a space between arguments
+        }
+    }
+
+    // Assign the full command to job->command
+    job->command = full_command;
 
     init_process(job, commands, shell, status);
-
-    if (bg == 1)
-    {
+    
+    if (bg == 1) {
         bg_job(shell, job->id);
+        // Update the job number display to use shell->nbr_jobs
+        printf("[%d] %d Running %s\n", shell->nbr_jobs - 1, job->id, job->command);
     }
 
     return 0;
 }
+
 
 int init_process(struct job *job, char **argv, struct shell_info *shell, int status )
 {
