@@ -22,5 +22,6 @@ int init_process(struct job *job, char **argv, struct shell_info *shell, int sta
 struct job *find_job(struct shell_info *shell, int id);
 int get_last_process_id(struct shell_info *shell);
 int list_jobs(struct job *jobs);
+void update_job_statuses(struct shell_info *shell);
 
 #endif // JOB_H  

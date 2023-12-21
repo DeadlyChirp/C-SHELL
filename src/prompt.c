@@ -10,6 +10,7 @@
 #include "include/shell_info.h"
 
 
+
 // // fonction pour tronquer le chemin du répertoire si trop long
 char *tronquer_chemin_repertoire(const char *dir, int max_length) {
     int dir_len = strlen(dir);
@@ -53,6 +54,7 @@ void update_cwd_info(struct shell_info *shell) {
 // Fonction pour afficher le prompt du shell
 char *afficher_prompt(struct shell_info *shell) {
     update_cwd_info(shell);
+
 
     // Tronquer le chemin si nécessaire
     char *display_dir = tronquer_chemin_repertoire(shell->cur_dir, 25); // prompt taille limite : 30 caractères maximum
