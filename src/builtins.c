@@ -65,6 +65,7 @@ return 0;
 }
 
 // Ajouter d'autres fonctions de commandes internes apres
+
 int has_active_jobs(struct shell_info *shell) {
     struct job *current_job = shell->root;
     while (current_job != NULL) {
@@ -76,11 +77,25 @@ int has_active_jobs(struct shell_info *shell) {
     return 0; // No active jobs
 }
 
+int handle_exit_command(char **tokens, struct shell_info *shell) {
+    int exit_status = (tokens[1] != NULL) ? atoi(tokens[1]) : shell->dernier_statut;
+
+    if (has_active_jobs(shell)) {
+        fprintf(stderr, "There are jobs still running or suspended.\n");
+        return 1; // Keep shell running
+    }
+
+    exit(exit_status);
+}
+
+
+
+// Exit command implementation
 int shell_exit(char **args, struct shell_info *shell) {
     int exit_status = (args[1] != NULL) ? atoi(args[1]) : shell->dernier_statut;
 
     if (has_active_jobs(shell)) {
-        // fprintf(stderr, "There are jobs still running or suspended.\n");
+        fprintf(stderr, "There are jobs still running or suspended.\n");
         return 1; // Do not exit, return control to the shell
     }
 
