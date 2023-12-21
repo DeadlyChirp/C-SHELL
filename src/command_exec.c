@@ -16,6 +16,8 @@ int is_background_job(char **tokens) {
     }
     return 0;
 }
+    // if ( & est dans la commande ) remplacer 0 par 1
+    // init_job(tokens, shell, is_background_job(tokens), status);
 
 int exec_command(char **tokens) {
      int status; 
@@ -52,9 +54,6 @@ int exec_command(char **tokens) {
         exit(exit_status); // Exit le shell avec le statut donné
     }
 }else {
-        // if ( & est dans la commande ) remplacer 0 par 1
-
-        init_job(tokens, shell, is_background_job(tokens), status);
     }
     return shell->dernier_statut; // Retour du statut de sortie de la commande
 }
