@@ -7,6 +7,15 @@
 #include "include/shell_info.h"
 #include "sys/wait.h"
 
+int is_background_job(char **tokens) {
+    for (int i = 0; tokens[i] != NULL; i++) {
+        if (strcmp(tokens[i], "&") == 0) {
+            tokens[i] = NULL; // Remove the '&' symbol from the tokens
+            return 1;
+        }
+    }
+    return 0;
+}
 
 int exec_command(char **tokens) {
      int status; 
@@ -44,7 +53,8 @@ int exec_command(char **tokens) {
     }
 }else {
         // if ( & est dans la commande ) remplacer 0 par 1
-        init_job(tokens, shell, 0, status);
+
+        init_job(tokens, shell, is_background_job(tokens), status);
     }
     return shell->dernier_statut; // Retour du statut de sortie de la commande
 }
