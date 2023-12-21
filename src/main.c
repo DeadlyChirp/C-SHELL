@@ -9,6 +9,8 @@ struct shell_info *shell = NULL;
 void main_loop() {
     char *input;
     char *tokens[16];
+    char *redirect[] ={"<", ">", ">|", ">>", "2>", "2>>", "2>|", "|", "<("} ;
+    size_t redirect_size = sizeof(redirect)/sizeof(redirect[0]);
 
     if (getcwd(shell->cur_dir, PATH_BUFSIZE) != NULL) {
         printf("repo courant : %s\n", shell->cur_dir);
@@ -31,9 +33,16 @@ void main_loop() {
         }
 
         
-        parse_command(input, tokens);
-        shell->dernier_statut = exec_command(tokens);
-
+        parse_command(input, tokens); 
+        if (tokens[1] && tokens[2]) {
+            for (unsigned i = 0; i< redirect_size; i++) {
+                if (strcmp(tokens[1], redirect[i]) == 0){
+                shell-> dernier_statut = exec_command_redirection(tokens);
+                }
+            }
+        }else{
+            shell->dernier_statut = exec_command(tokens); 
+        }
         free(input);
         
     }

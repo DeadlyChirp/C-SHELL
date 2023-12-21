@@ -3,5 +3,6 @@
 #include <shell_info.h>
 
 int exec_command(char **tokens);
+int exec_command_redirection(char **tokens);
 
 #endif
