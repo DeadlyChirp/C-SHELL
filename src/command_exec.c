@@ -33,6 +33,7 @@ int exec_command(char **tokens) {
             shell->dernier_statut = changer_repertoire(2, tokens);
         } else if (strcmp(tokens[0], "exit") == 0) {
             shell->dernier_statut = exit_all_jobs(shell);
+            printf("%d \n", shell->nbr_jobs);
         } else {
             // cd <ref>
             shell->dernier_statut = changer_repertoire(2, tokens);

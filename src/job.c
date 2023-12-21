@@ -277,6 +277,7 @@ int exit_all_jobs(struct shell_info *shell)
             kill_job(shell, job->id);
             job = job->next;
         }
+        shell->nbr_jobs = 0;
         return 0;
     }
     else
