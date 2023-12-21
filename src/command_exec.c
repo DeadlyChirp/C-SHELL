@@ -54,7 +54,7 @@ int exec_command(char **tokens) {
             // processus enfant 
             execvp(tokens[0], tokens);
             perror("execvp");
-            exit(EXIT_FAILURE);
+            exit(shell->dernier_statut);
         } else {
             // processus parent 
             waitpid(pid, &status, 0);
@@ -71,18 +71,18 @@ int exec_command(char **tokens) {
 }
 
 
-int exec_command_redirection(char **tokens){
-    if (strcmp(tokens[1], "<") == 0){
+int exec_command_redirection(char **tokens, char *redirect_symbole, char *redirect_file){
+    if (strcmp(redirect_symbole, "<") == 0){
         // <
         printf("redirection <\n");
-    } else if (strcmp(tokens[1], ">") == 0){
+    } else if (strcmp(redirect_symbole, ">") == 0){
         // >
         pid_t pid = fork();
         if (pid == -1) {
             perror("fork");
             exit(EXIT_FAILURE);
         } else if (pid == 0) {
-            int fd = open(tokens[2], O_WRONLY | O_CREAT | O_EXCL, 0666);
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_EXCL, 0666);
             if (fd == -1) {
                 perror("open");
                 exit(EXIT_FAILURE);
@@ -94,25 +94,25 @@ int exec_command_redirection(char **tokens){
         } else {
             waitpid(pid, NULL, 0);
         }        
-    } else if (strcmp(tokens[1], ">|") == 0){
+    } else if (strcmp(redirect_symbole, ">|") == 0){
         // >|
         printf("redirection >|\n");
-    } else if (strcmp(tokens[1], ">>") == 0){
+    } else if (strcmp(redirect_symbole, ">>") == 0){
         // >>
         printf("redirection >>\n");
-    } else if (strcmp(tokens[1], "2>") == 0){
+    } else if (strcmp(redirect_symbole, "2>") == 0){
         // 2>
         printf("redirection 2>\n");
-    } else if (strcmp(tokens[1], "2>>") == 0){
+    } else if (strcmp(redirect_symbole, "2>>") == 0){
         // 2>>
         printf("redirection 2>>\n");
-    } else if (strcmp(tokens[1], "2>|") == 0){
+    } else if (strcmp(redirect_symbole, "2>|") == 0){
         // 2>|
         printf("redirection 2>|\n");
-    } else if (strcmp(tokens[1], "|") == 0){
+    } else if (strcmp(redirect_symbole, "|") == 0){
         // |
         printf("redirection |\n");
-    } else if (strcmp(tokens[1], "<(") == 0){
+    } else if (strcmp(redirect_symbole, "<(") == 0){
         // <(
         printf("redirection <(\n");
     } else {

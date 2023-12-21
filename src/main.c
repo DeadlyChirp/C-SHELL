@@ -34,15 +34,23 @@ void main_loop() {
 
         
         parse_command(input, tokens); 
-        if (tokens[1] && tokens[2]) {
-            for (unsigned i = 0; i< redirect_size; i++) {
-                if (strcmp(tokens[1], redirect[i]) == 0){
-                shell-> dernier_statut = exec_command_redirection(tokens);
+
+        int redirect_or_not = 0; //0 si pas de redirection, 1 si redirection
+
+        for (unsigned i = 0; tokens[i] != NULL; i++) {
+            for (unsigned j = 0; j< redirect_size; j++) {
+                if (strcmp(tokens[i], redirect[j]) == 0 && tokens[i+1]){
+                    char *redirect_symbole = tokens[i];
+                    char *redirect_file = tokens[i+1];
+                    redirect_or_not = 1;
+                shell-> dernier_statut = exec_command_redirection(tokens, redirect_symbole, redirect_file);
                 }
             }
-        }else{
+        }   
+        if (redirect_or_not == 0){
             shell->dernier_statut = exec_command(tokens); 
         }
+        
         free(input);
         
     }
