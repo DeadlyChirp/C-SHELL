@@ -98,12 +98,32 @@ int exec_command(char **tokens) {
                 perror("execvp");
                 exit(shell->dernier_statut);
             }else if (has_symbole > 1){
+                 for (int i = 0; i < has_symbole - 1; i++) { // trie les indices des symboles de redirection
+                    for (int j = i + 1; j < has_symbole; j++) {
+                        if (symbole_indices[i] > symbole_indices[j]) {
+                        int temp = symbole_indices[i];
+                        symbole_indices[i] = symbole_indices[j];
+                        symbole_indices[j] = temp;
+                        }
+                    }
+                }
                 for (int i = 0; i<has_symbole ; i++){
-                    char **toks1 = split_tokens(tokens, 0, symbole_indices[i]);
-                    char **toks2 = split_tokens(tokens, symbole_indices[i] + 1, symbole_indices[i+1] );
-                    exec_command_redirection(toks1, tokens[symbole_indices[i]], toks2[0]);
-                    free(toks1);
-                    free(toks2);
+                    char **toks1;
+                    char **toks2;
+                    
+                    if (i == has_symbole - 1) {
+                        toks1 = split_tokens(tokens, 0, symbole_indices[i]);
+                        toks2 = split_tokens(tokens, symbole_indices[i] + 1, -1); // -1 pour aller jusqu'à la fin
+                    } else {
+                        toks1 = split_tokens(tokens, 0, symbole_indices[i]);
+                        toks2 = split_tokens(tokens, symbole_indices[i] + 1, symbole_indices[i + 1]);
+                    }
+
+                exec_command_redirection(toks1, tokens[symbole_indices[i]], toks2[0]);
+
+                // Libération de la mémoire
+                free(toks1);
+                free(toks2);
                 }
             }else{
                 execvp(tokens[0], tokens);
