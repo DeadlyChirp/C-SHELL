@@ -8,7 +8,6 @@
 struct job {
     int bg; // 0 = foreground, 1 = background 
     int id; //numero du job
-    pid_t pgid; // process group id
     int etat; // done/running/stopped = 0/1/2
     char *command; // commande du job
     struct job *root; // pointer vers le processus racine de la liste des processus

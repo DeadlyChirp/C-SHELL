@@ -5,18 +5,43 @@
 #include "include/job.h"
 #include "include/shell_info.h"
 
-int get_last_process_id(struct shell_info *shell){
-    if(shell -> last != NULL){
-        //obtenir le dernier processus
+// utilitaires pour les jobs
+job *find_job(shell_info *shell, int id)
+{
+    struct job *job = shell->root;
+
+    while (job->id != id)
+    {
+        if (job->next != NULL)
+        {
+            job = job->next;
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+    return job;
+}
+
+
+
+int get_last_process_id(struct shell_info *shell)
+{
+    if (shell->last != NULL)
+    {
+        // obtenir le dernier processus
         struct process *tab_process = shell->last->processes;
-        //obtenir le dernier id à partir du tableau de processus
+        // obtenir le dernier id à partir du tableau de processus
         int i = 0;
-        while(tab_process[i].pid != 0){
+        while (tab_process[i].pid != 0)
+        {
             i++;
         }
-        return tab_process[i-1].pid;
+        return tab_process[i - 1].pid;
     }
-    else{
+    else
+    {
         return 0;
     }
 }
@@ -47,10 +72,11 @@ int list_jobs(struct job *jobs)
     return 0;
 }
 
-//je pensais faire un job "racine" pour jsh mais trop relou wola 
+// je pensais faire un job "racine" pour jsh mais trop relou wola
 
 // ajoute un job à la liste des jobs
-int init_job(struct process *processes, struct shell_info *shell, int array_size, char *command, int bg){
+int init_job(struct process *processes, struct shell_info *shell, int array_size, char *command, int bg)
+{
     struct job *job = malloc(sizeof(struct job) + array_size * sizeof(struct process));
     if (job == NULL)
     {
@@ -63,27 +89,33 @@ int init_job(struct process *processes, struct shell_info *shell, int array_size
     job->root = shell->root;
     job->next = NULL;
     job->id = shell->last->id + 1;
-    //taille tab process last+1
+    // taille tab process last+1
     job->pgid = shell->last->processes[array_size].pid + 1;
-    job->etat = 1; //running
+    job->etat = 1; // running
     job->command = command;
     job->bg = bg;
-    shell->last->next = job;    
+    shell->last->next = job;
     shell->last = job;
-    
+
     return 0;
 }
 
-struct process *init_process(char *command, int argc, char **argv, char *iputPath, char *outputPath){
-     pid_t pid = fork();
+struct process *init_process(char *command, int argc, char **argv, char *iputPath, char *outputPath)
+{
+    pid_t pid = fork();
 
-    if (pid < 0) {
+    if (pid < 0)
+    {
         // The fork failed.
         return NULL;
-    } else if (pid == 0) {
+    }
+    else if (pid == 0)
+    {
         // Tchild process
         // exec()?
-    } else {
+    }
+    else
+    {
         // parent process
     }
 
