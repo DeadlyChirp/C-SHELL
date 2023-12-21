@@ -4,7 +4,8 @@
         "prompt.h": "c",
         "shell_info.h": "c",
         "string.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "job.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

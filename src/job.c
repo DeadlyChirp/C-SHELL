@@ -75,14 +75,16 @@ int list_jobs(struct job *jobs)
 // je pensais faire un job "racine" pour jsh mais trop relou wola
 
 // ajoute un job à la liste des jobs
-int init_job(char **commands, struct shell_info *shell, int bg)
+int init_job(char **commands, struct shell_info *shell, int bg, int status)
 {
-    if (commands == NULL) {
+    if (commands == NULL)
+    {
         fprintf(stderr, "Error: commands is NULL\n");
         return EXIT_FAILURE;
     }
 
-    if (shell == NULL) {
+    if (shell == NULL)
+    {
         fprintf(stderr, "Error: shell is NULL\n");
         return EXIT_FAILURE;
     }
@@ -94,7 +96,8 @@ int init_job(char **commands, struct shell_info *shell, int bg)
         return EXIT_FAILURE;
     }
 
-    if (shell->last != NULL || shell->root != NULL) {    
+    if (shell->last != NULL || shell->root != NULL)
+    {
         job->root = shell->root;
         job->next = NULL;
         job->id = shell->last->id + 1;
@@ -102,7 +105,9 @@ int init_job(char **commands, struct shell_info *shell, int bg)
         job->bg = bg;
         shell->last->next = job;
         shell->last = job;
-    } else {
+    }
+    else
+    {
         job->root = job;
         job->next = NULL;
         job->id = 1;
@@ -112,25 +117,26 @@ int init_job(char **commands, struct shell_info *shell, int bg)
         shell->last = job;
     }
 
+    init_process(job, commands, shell, status);
 
-    init_process(job, commands);
-
-    if(bg == 1) {
+    if (bg == 1)
+    {
         bg_job(shell, job->id);
     }
 
     return 0;
 }
 
-
-int init_process(struct job *job, char **argv)
+int init_process(struct job *job, char **argv, struct shell_info *shell, int status )
 {
-    if (job == NULL) {
+    if (job == NULL)
+    {
         fprintf(stderr, "Error: job is NULL\n");
         return -1;
     }
 
-    if (argv == NULL) {
+    if (argv == NULL)
+    {
         fprintf(stderr, "Error: argv is NULL\n");
         return -1;
     }
@@ -156,6 +162,20 @@ int init_process(struct job *job, char **argv)
     else
     {
         // This is the parent process
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status))
+        {
+            shell->dernier_statut = WEXITSTATUS(status); // Prendre le statut de sortie de l'enfant
+        }
+        else if (WIFSIGNALED(status))
+        {
+            shell->dernier_statut = WTERMSIG(status); // commande tuée par un signal
+        }
+        else
+        {
+            shell->dernier_statut = EXIT_FAILURE; // Erreur inconnue
+        }
+
         // Add the new process to the job
         struct process *process = malloc(sizeof(struct process));
         if (!process)
@@ -175,14 +195,15 @@ int init_process(struct job *job, char **argv)
     return 0;
 }
 
-//mettrre le job en avant plan
-int fg_job(struct shell_info *shell, int job_id) {
+// mettrre le job en avant plan
+int fg_job(struct shell_info *shell, int job_id)
+{
     struct job *job = find_job(shell, job_id);
-    if (!job) {
+    if (!job)
+    {
         fprintf(stderr, "Job %d non trouve\n", job_id);
         return -1;
     }
-
 
     // if (kill(-job->pgid, SIGCONT) < 0) {
     //     perror("Error sending SIGCONT");
@@ -194,10 +215,12 @@ int fg_job(struct shell_info *shell, int job_id) {
     return 0;
 }
 
-//mettre le job en arrière plan
-int bg_job(struct shell_info *shell, int job_id) {
+// mettre le job en arrière plan
+int bg_job(struct shell_info *shell, int job_id)
+{
     struct job *job = find_job(shell, job_id);
-    if (!job) {
+    if (!job)
+    {
         fprintf(stderr, "Job %d not found\n", job_id);
         return -1;
     }
@@ -207,7 +230,7 @@ int bg_job(struct shell_info *shell, int job_id) {
     //     return -1;
     // }
 
-    job->bg = 1;  
+    job->bg = 1;
 
     return 0;
 }
