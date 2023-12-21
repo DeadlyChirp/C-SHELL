@@ -18,7 +18,9 @@ struct shell_info {
     char cur_dir[PATH_BUFSIZE];   // repertoire courant
     char pw_dir[PATH_BUFSIZE];    // repertoir de travail
     char prev_dir[PATH_BUFSIZE]; // repertoire precedent
-    struct job *jobs[NBR_JOBS + 1]; // tableau des jobs
+    struct job *root; // premier job de la liste
+    struct job *last; // dernier job de la liste
+    struct job *fg_job; // job en foreground    
     int nbr_jobs;                   // nombre de jobs
     char project_name[PROJECT_NAME_SIZE]; // Nom du projet
     int dernier_statut; // dernier statut
