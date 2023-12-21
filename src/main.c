@@ -35,6 +35,7 @@ void main_loop() {
         
         parse_command(input, tokens); 
 
+
         int redirect_or_not = 0; //0 si pas de redirection, 1 si redirection
 
         for (unsigned i = 0; tokens[i] != NULL; i++) {
