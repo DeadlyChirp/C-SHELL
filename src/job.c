@@ -141,7 +141,7 @@ int init_job(char **commands, struct shell_info *shell, int bg, int status)
     return 0;
 }
 
-int init_process(struct job *job, char **argv, struct shell_info *shell, int status )
+int init_process(struct job *job, char **argv, struct shell_info *shell, int status)
 {
     if (job == NULL)
     {
@@ -252,17 +252,33 @@ int bg_job(struct shell_info *shell, int job_id)
 int kill_job(struct shell_info *shell, int job_id)
 {
     struct job *job = find_job(shell, job_id);
-    if (!job)
+    if (job == NULL)
     {
         fprintf(stderr, "Job %d not found\n", job_id);
         return -1;
     }
 
-    if (kill(-job->id, SIGKILL) < 0)
+    // déréférencer le job
+    if (job->root == job)
     {
-        perror("Error sending SIGKILL");
-        return -1;
+        shell->root = job->next;
     }
+    else if (shell->last == job)
+    {
+        shell->last = job->next;
+    }
+    else
+    {
+        struct job *prev_job = job->root;
+        while (prev_job->next != job)
+        {
+            prev_job = prev_job->next;
+        }
+        prev_job->next = job->next;
+    }
+    free(job);
+
+    shell->nbr_jobs--;
 
     return 0;
 }
@@ -277,7 +293,6 @@ int exit_all_jobs(struct shell_info *shell)
             kill_job(shell, job->id);
             job = job->next;
         }
-        shell->nbr_jobs = 0;
         return 0;
     }
     else
