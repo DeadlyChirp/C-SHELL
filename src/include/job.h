@@ -2,6 +2,7 @@
 #define JOB_H
 
 #include "process.h"
+#include "shell_info.h"
 
 
 // Definition of the job structure
@@ -15,5 +16,11 @@ struct job {
     int notified; // true (1)
     struct process *processes; // tableau des processus
 };
+
+int init_job(char **commands, struct shell_info *shell, int bg);
+int init_process(struct job *job, char **argv);
+struct job *find_job(struct shell_info *shell, int id);
+int get_last_process_id(struct shell_info *shell);
+int list_jobs(struct job *jobs);
 
 #endif // JOB_H  

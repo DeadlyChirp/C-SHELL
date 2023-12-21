@@ -24,7 +24,7 @@ struct job *find_job(struct shell_info *shell, int id)
     return job;
 }
 
-
+// utilitaire pour les processus
 
 int get_last_process_id(struct shell_info *shell)
 {
@@ -75,48 +75,97 @@ int list_jobs(struct job *jobs)
 // je pensais faire un job "racine" pour jsh mais trop relou wola
 
 // ajoute un job à la liste des jobs
-int init_job(struct process *processes, struct shell_info *shell, int array_size, char *command, int bg)
+int init_job(char **commands, struct shell_info *shell, int bg)
 {
-    struct job *job = malloc(sizeof(struct job) + array_size * sizeof(struct process));
+    if (commands == NULL) {
+        fprintf(stderr, "Error: commands is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    if (shell == NULL) {
+        fprintf(stderr, "Error: shell is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    struct job *job = malloc(sizeof(struct job));
     if (job == NULL)
     {
         perror("malloc");
         return EXIT_FAILURE;
     }
-    // copilot a mit ça là mais je vois pas
-    // memset(job, 0, sizeof(struct job));
-    memcpy(job->processes, processes, sizeof(struct process) * array_size);
-    job->root = shell->root;
-    job->next = NULL;
-    job->id = shell->last->id + 1;
-    // taille tab process last+1
-    job->id = shell->last->processes[array_size].pid + 1;
-    job->etat = 1; // running
-    job->command = command;
-    job->bg = bg;
-    shell->last->next = job;
-    shell->last = job;
+
+    if (shell->last != NULL || shell->root != NULL) {    
+        job->root = shell->root;
+        job->next = NULL;
+        job->id = shell->last->id + 1;
+        job->etat = 1; // running
+        job->bg = bg;
+        shell->last->next = job;
+        shell->last = job;
+    } else {
+        job->root = job;
+        job->next = NULL;
+        job->id = 1;
+        job->etat = 1; // running
+        job->bg = bg;
+        shell->root = job;
+        shell->last = job;
+    }
+
+
+    init_process(job, commands);
 
     return 0;
 }
 
-struct process *init_process(char *command, int argc, char **argv, char *iputPath, char *outputPath)
+
+int init_process(struct job *job, char **argv)
 {
+    if (job == NULL) {
+        fprintf(stderr, "Error: job is NULL\n");
+        return -1;
+    }
+
+    if (argv == NULL) {
+        fprintf(stderr, "Error: argv is NULL\n");
+        return -1;
+    }
+
     pid_t pid = fork();
 
     if (pid < 0)
     {
-        // The fork failed.
-        return NULL;
+        // Handle error
+        perror("fork");
+        return -1;
     }
     else if (pid == 0)
     {
-        // Tchild process
-        // exec()?
+        // This is the child process
+        // Replace the process image with the new command
+        if (execvp(argv[0], argv) < 0)
+        {
+            perror("execvp");
+            exit(EXIT_FAILURE);
+        }
     }
     else
     {
-        // parent process
+        // This is the parent process
+        // Add the new process to the job
+        struct process *process = malloc(sizeof(struct process));
+        if (!process)
+        {
+            perror("malloc");
+            return -1;
+        }
+        process->pid = pid;
+        process->command = argv[0];
+        process->argv = argv;
+        process->completed = 0;
+        process->stopped = 0;
+        process->next = job->processes;
+        job->processes = process;
     }
 
     return 0;
