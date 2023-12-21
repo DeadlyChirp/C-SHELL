@@ -115,6 +115,10 @@ int init_job(char **commands, struct shell_info *shell, int bg)
 
     init_process(job, commands);
 
+    if(bg == 1) {
+        bg_job(shell, job->id);
+    }
+
     return 0;
 }
 
@@ -167,6 +171,43 @@ int init_process(struct job *job, char **argv)
         process->next = job->processes;
         job->processes = process;
     }
+
+    return 0;
+}
+
+//mettrre le job en avant plan
+int fg_job(struct shell_info *shell, int job_id) {
+    struct job *job = find_job(shell, job_id);
+    if (!job) {
+        fprintf(stderr, "Job %d non trouve\n", job_id);
+        return -1;
+    }
+
+
+    // if (kill(-job->pgid, SIGCONT) < 0) {
+    //     perror("Error sending SIGCONT");
+    //     return -1;
+    // }
+
+    // wait_for_job(shell, job_id);
+
+    return 0;
+}
+
+//mettre le job en arrière plan
+int bg_job(struct shell_info *shell, int job_id) {
+    struct job *job = find_job(shell, job_id);
+    if (!job) {
+        fprintf(stderr, "Job %d not found\n", job_id);
+        return -1;
+    }
+
+    // if (kill(-job->pgid, SIGCONT) < 0) {
+    //     perror("Error sending SIGCONT");
+    //     return -1;
+    // }
+
+    job->bg = 1;  
 
     return 0;
 }

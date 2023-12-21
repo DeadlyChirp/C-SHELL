@@ -14,7 +14,7 @@ int exec_command(char **tokens)
         return 1;
     }
 
-    shell->dernier_statut = afficher_dernier_statut();
+    // shell->dernier_statut = afficher_dernier_statut();
 
     if (tokens == NULL) {
         fprintf(stderr, "Error: tokens is NULL\n");
