@@ -1,6 +1,7 @@
 #ifndef JOB_H
 #define JOB_H
 
+#include <signal.h>
 #include "process.h"
 #include "shell_info.h"
 #include "command_exec.h"
@@ -22,5 +23,6 @@ int init_process(struct job *job, char **argv, struct shell_info *shell, int sta
 struct job *find_job(struct shell_info *shell, int id);
 int get_last_process_id(struct shell_info *shell);
 int list_jobs(struct job *jobs);
+int exit_all_jobs(struct shell_info *shell);
 
 #endif // JOB_H  

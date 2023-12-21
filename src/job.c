@@ -248,3 +248,40 @@ int bg_job(struct shell_info *shell, int job_id)
 
     return 0;
 }
+
+int kill_job(struct shell_info *shell, int job_id)
+{
+    struct job *job = find_job(shell, job_id);
+    if (!job)
+    {
+        fprintf(stderr, "Job %d not found\n", job_id);
+        return -1;
+    }
+
+    if (kill(-job->id, SIGKILL) < 0)
+    {
+        perror("Error sending SIGKILL");
+        return -1;
+    }
+
+    return 0;
+}
+
+int exit_all_jobs(struct shell_info *shell)
+{
+    if (shell->nbr_jobs > 0)
+    {
+        struct job *job = shell->root;
+        while (job->next != NULL)
+        {
+            kill_job(shell, job->id);
+            job = job->next;
+        }
+        return 0;
+    }
+    else
+    {
+        printf("Pas de jobs\n");
+        return 1;
+    }
+}
