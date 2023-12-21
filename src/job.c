@@ -6,7 +6,7 @@
 #include "include/shell_info.h"
 
 // utilitaires pour les jobs
-job *find_job(shell_info *shell, int id)
+struct job *find_job(struct shell_info *shell, int id)
 {
     struct job *job = shell->root;
 
@@ -59,12 +59,12 @@ int list_jobs(struct job *jobs)
         return 1;
     }
 
-    printf("ID\tPGID\tetat\tcommande\n");
+    printf("ID\tID\tetat\tcommande\n");
     do
     {
         printf("%d\t%d\t%d\t%s\n",
                jobs->id,
-               jobs->pgid,
+               jobs->id,
                jobs->etat,
                jobs->command);
     } while (jobs->next != NULL);
@@ -90,7 +90,7 @@ int init_job(struct process *processes, struct shell_info *shell, int array_size
     job->next = NULL;
     job->id = shell->last->id + 1;
     // taille tab process last+1
-    job->pgid = shell->last->processes[array_size].pid + 1;
+    job->id = shell->last->processes[array_size].pid + 1;
     job->etat = 1; // running
     job->command = command;
     job->bg = bg;
