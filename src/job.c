@@ -24,6 +24,18 @@ struct job *find_job(struct shell_info *shell, int id)
     return job;
 }
 
+get_last_job_id(struct shell_info *shell)
+{
+    if (shell->last != NULL)
+    {
+        return shell->last->id;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 // utilitaire pour les processus
 
 int get_last_process_id(struct shell_info *shell)
@@ -100,11 +112,12 @@ int init_job(char **commands, struct shell_info *shell, int bg, int status)
     {
         job->root = shell->root;
         job->next = NULL;
-        job->id = shell->last->id + 1;
+        job->id = get_last_job_id(shell) + 1;
         job->etat = 1; // running
         job->bg = bg;
         shell->last->next = job;
         shell->last = job;
+        shell->nbr_jobs++;
     }
     else
     {
@@ -115,6 +128,7 @@ int init_job(char **commands, struct shell_info *shell, int bg, int status)
         job->bg = bg;
         shell->root = job;
         shell->last = job;
+        shell->nbr_jobs = 1;
     }
 
     init_process(job, commands, shell, status);
