@@ -97,35 +97,63 @@ int exec_command(char **tokens) {
                 free(tokens2);
                 perror("execvp");
                 exit(shell->dernier_statut);
-            }else if (has_symbole > 1){
-                 for (int i = 0; i < has_symbole - 1; i++) { // trie les indices des symboles de redirection
-                    for (int j = i + 1; j < has_symbole; j++) {
-                        if (symbole_indices[i] > symbole_indices[j]) {
-                        int temp = symbole_indices[i];
-                        symbole_indices[i] = symbole_indices[j];
-                        symbole_indices[j] = temp;
-                        }
-                    }
-                }
-                for (int i = 0; i<has_symbole ; i++){
-                    char **toks1;
-                    char **toks2;
-                    
-                    if (i == has_symbole - 1) {
-                        toks1 = split_tokens(tokens, 0, symbole_indices[i]);
-                        toks2 = split_tokens(tokens, symbole_indices[i] + 1, -1); // -1 pour aller jusqu'à la fin
-                    } else {
-                        toks1 = split_tokens(tokens, 0, symbole_indices[i]);
-                        toks2 = split_tokens(tokens, symbole_indices[i] + 1, symbole_indices[i + 1]);
-                    }
+            }else if (has_symbole > 0) {
+         pid_t pid = fork();
+         if (pid == -1) {
+             perror("fork");
+             shell->dernier_statut = EXIT_FAILURE;
+         } else if (pid == 0) {
+             for (int i = 0; i < has_symbole; i++) {
+                 int fd;
+                 char *redirect_symbol = tokens[symbole_indices[i]];
+                 char *file_path = tokens[symbole_indices[i] + 1];
 
-                exec_command_redirection(toks1, tokens[symbole_indices[i]], toks2[0]);
+                 if (strcmp(redirect_symbol, "<") == 0) {
+                     fd = open(file_path, O_RDONLY);
+                 } else if (strcmp(redirect_symbol, ">") == 0) {
+                     fd = open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+                 } else if (strcmp(redirect_symbol, ">>") == 0) {
+                     fd = open(file_path, O_WRONLY | O_CREAT | O_APPEND, 0666);
+                 } else if (strcmp(redirect_symbol, "2>") == 0) {
+                     fd = open(file_path, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+                 } else if (strcmp(redirect_symbol, "2>>") == 0) {
+                     fd = open(file_path, O_WRONLY | O_CREAT | O_APPEND, 0666);
+                 } else if (strcmp(redirect_symbol, ">|") == 0 || strcmp(redirect_symbol, "2>|") == 0) {
+                     fd = open(file_path, O_WRONLY | O_CREAT, 0666);
+                 } else {
+                     perror("Unsupported redirection");
+                     exit(EXIT_FAILURE);
+                 }
 
-                // Libération de la mémoire
-                free(toks1);
-                free(toks2);
-                }
-            }else{
+                 if (fd == -1) {
+                     perror("open");
+                     exit(EXIT_FAILURE);
+                 }
+
+                 if (strcmp(redirect_symbol, "<") == 0) {
+                     dup2(fd, STDIN_FILENO);
+                 } else if (strcmp(redirect_symbol, ">") == 0 || strcmp(redirect_symbol, ">>") == 0) {
+                     dup2(fd, STDOUT_FILENO);
+                 } else if (strcmp(redirect_symbol, "2>") == 0 || strcmp(redirect_symbol, "2>>") == 0) {
+                     dup2(fd, STDERR_FILENO);
+                 }
+
+                 close(fd);
+             }
+
+             tokens[symbole_indices[0]] = NULL; // Terminate the command part
+             execvp(tokens[0], tokens);
+             perror("execvp");
+             exit(EXIT_FAILURE);
+         } else {
+             waitpid(pid, &status, 0);
+             if (WIFEXITED(status)) {
+                 shell->dernier_statut = WEXITSTATUS(status);
+             } else {
+                 shell->dernier_statut = EXIT_FAILURE;
+             }
+         }
+     } else{
                 execvp(tokens[0], tokens);
                 perror("execvp");
                 exit(shell->dernier_statut);
