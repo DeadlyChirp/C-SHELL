@@ -33,6 +33,8 @@ int is_background_job(char **tokens) {
     }
     return 0;
 }
+    // if ( & est dans la commande ) remplacer 0 par 1
+    // init_job(tokens, shell, is_background_job(tokens), status);
 
     // if ( & est dans la commande ) remplacer 0 par 1
     // init_job(tokens, shell, is_background_job(tokens), status);
@@ -151,6 +153,117 @@ int exec_command(char **tokens) {
 
     return shell->dernier_statut;
 }
+
+
+int exec_command_redirection(char **tokens, char *redirect_symbole, char *redirect_file){
+    if (strcmp(tokens[0], "exit") == 0) {
+        int exit_status = shell->dernier_statut; // exit avec le statut de la dernière commande 
+        if (has_symbole==1){
+            exit(exit_status);
+        }else{
+            if (tokens[1] != NULL){
+                
+               
+                exit_status = atoi(tokens[1]); // Override si un argument est fourni
+                }
+            
+        }
+
+    if (shell->nbr_jobs > 0) {
+        fprintf(stderr, "There are jobs still running or suspended.\n");
+        shell->dernier_statut = 1; // met à jour le statut sans quitter
+    } else {
+        exit(exit_status); // Exit le shell avec le statut donné
+        }
+    }
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    } else if (pid == 0) {
+        if (strcmp(redirect_symbole, "<") == 0){
+            // <    
+            int fd = open(redirect_file, O_RDONLY);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+        }else if (strcmp(redirect_symbole, ">") == 0){
+            // >
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_EXCL, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        } else if (strcmp(redirect_symbole, ">|") == 0){
+            // >|
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        } else if (strcmp(redirect_symbole, ">>") == 0){
+            // >>
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
+            close(fd);
+        } else if (strcmp(redirect_symbole, "2>") == 0){
+            // 2>
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_EXCL, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDERR_FILENO);
+            close(fd);
+        } else if (strcmp(redirect_symbole, "2>>") == 0){
+            // 2>>
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDERR_FILENO);
+            close(fd);
+        } else if (strcmp(redirect_symbole, "2>|") == 0){
+            // 2>|
+            int fd = open(redirect_file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+            if (fd == -1) {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDERR_FILENO);
+            close(fd);
+        } else{
+            // |
+            printf("redirection |\n");
+        }
+        shell->dernier_statut = exec_command(tokens);
+        exit(shell->dernier_statut);
+    }else {
+        int status;
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status)) {
+            shell->dernier_statut = WEXITSTATUS(status); // Prendre le statut de sortie de l'enfant
+        } else if (WIFSIGNALED(status)) {
+            shell->dernier_statut = WTERMSIG(status); // commande tuée par un signal
+        } else {
+            shell->dernier_statut = EXIT_FAILURE; // Erreur inconnue
+        }
+    }
+        return shell->dernier_statut;
+}
+
 
 
 int exec_command_redirection(char **tokens, char *redirect_symbole, char *redirect_file){
