@@ -1,0 +1,12 @@
+j'ai surement laissé des champs que je ne vais pas utilisé dans process.h et job.h
+peut être transformer le tableau de jobs en une liste 
+ou alors faire un ttableau "dynamique" plus tard
+car pour l'instant limité à 21 jobs
+
+je vais faire simple, une ligne de commande = un job, même si cette ligne ne lance qu'un seul processus
+les jobs seront référencé par une liste chainé
+chaque processus aura un id 
+chaque job aura un tableau de processus
+soit une liste chainée contenant des tableaux de processus avec au moins un processus par job
+
+faudra surement passé les commandes externes en job, car un fork() a lieu

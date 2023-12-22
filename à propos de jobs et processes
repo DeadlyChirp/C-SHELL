@@ -1,0 +1,18 @@
+un groupe de processus est un job
+
+un seul groupe de processus à l'avant plan
+
+jsh permet l'execution simultanée de plusieurs jobs, ainsi que leur bascule à l'avant et arrière planen gardant en mémoire toutes les informations nécessaires à la surveillance, à l'interruption et à la reprise des processus concernés.
+
+sh peut lancer de nouveaux jobs à l'arrière-plan ou à l'avant-plan du terminal, selon que la ligne de commande termine ou non par le symbole &
+
+
+
+-----------------------------
+
+POUR LE JALON 2
+le premier jalon doit pas bouger 
+exécution des commandes externes simples à l'arrière-plan avec & (sans possibilité de basculer à l'avant-plan, et seulement pour les commandes qui ne cherchent pas à lire ou écrire sur le terminal)
+bon fonctionnement de jobs (sans option), kill et exit
+adaptation du prompt selon le nombre de jobs en cours
+redirections autres que | et <( )
