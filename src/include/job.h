@@ -7,15 +7,16 @@
 
 // Definition of the job structure
 struct job {
-    int bg; // 0 = foreground, 1 = background 
-    int id; //numero du job
-    int etat; // done/running/stopped = 0/1/2
-    char *command; // commande du job
-    struct job *root; // pointer vers le processus racine de la liste des processus
-    struct job *next; 
-    int notified; // true (1)
-    struct process *processes; // tableau des processus
+     int bg;          // 0 = foreground, 1 = background
+    int id;          // job number
+    pid_t pid;       // process ID
+    int etat;        // done/running/stopped = 0/1/2
+    char *command;   // command of the job
+    struct job *next; // next job in the list
+    int notified;    // true (1) if job status has been reported
+    struct process *processes; // list of processes in the job
 };
+
 
 int init_job(char **commands, struct shell_info *shell, int bg, int status);
 int init_process(struct job *job, char **argv, struct shell_info *shell, int status);

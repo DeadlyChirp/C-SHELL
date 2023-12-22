@@ -89,6 +89,13 @@ int exec_command(char **tokens) {
         exit(exit_status); // Exit le shell avec le statut donné
     }
 }else {
+    char full_command[1024] = {0}; // Assuming 1024 is a sufficient length
+    for (int i = 0; tokens[i] != NULL; i++) {
+        strcat(full_command, tokens[i]);
+        if (tokens[i + 1] != NULL) {
+            strcat(full_command, " ");
+        }
+    }
         pid_t pid = fork();
 
         if (pid == -1) {
@@ -136,7 +143,7 @@ int exec_command(char **tokens) {
             }
         } else {
             // Background job handling
-            printf("[%d] %d Running %s\n", shell->nbr_jobs++, pid, tokens[0]);
+            printf("[%d] %d Running %s\n", shell->nbr_jobs++, pid, full_command);
             // Implement job tracking for background jobs here if needed
         }
     }
