@@ -33,24 +33,48 @@ void main_loop() {
         }
 
         
-        parse_command(input, tokens); 
+        parse_command(input, tokens);
+
+        int symbole_indices[10]; //store les indices des différents symboles de redirection
+        int nb_symbole = 0; //nombre de symbole de redirection
+        for (unsigned i = 0; tokens[i] != NULL; i++) {
+                for (unsigned j = 0; j< redirect_size; j++) {
+                    if (strcmp(tokens[i], redirect[j]) == 0){
+                        symbole_indices[nb_symbole++] = i;
+                        break;  
+                    } 
+                }
+            }
 
 
         int redirect_or_not = 0; //0 si pas de redirection, 1 si redirection
-
-        for (unsigned i = 0; tokens[i] != NULL; i++) {
-            for (unsigned j = 0; j< redirect_size; j++) {
-                if (strcmp(tokens[i], redirect[j]) == 0 && tokens[i+1]){
-                    char *redirect_symbole = tokens[i];
-                    char *redirect_file = tokens[i+1];
-                    redirect_or_not = 1;
-                shell-> dernier_statut = exec_command_redirection(tokens, redirect_symbole, redirect_file);
+        //t'es trop con la vie de oim mdrr, le truc là il peut que
+        //handle un seul redirect, genre si tu fais ls > a > b, il va juste
+        //prendre en compte le premier redirect, et pas le deuxième, donc
+        //faut que tu fasses un truc qui check si y'a un redirect, et si y'en a
+        //un, tu le fais, et tu check si y'en a un autre, et tu le fais, etc
+        //et si y'en a pas, tu fais la commande normale
+        
+            if (nb_symbole == 1){
+                for (unsigned i = 0; tokens[i] != NULL; i++) {
+                    for (unsigned j = 0; j< redirect_size; j++) {
+                        if (strcmp(tokens[i], redirect[j]) == 0 && tokens[i+1]){
+                            char *redirect_symbole = tokens[i];
+                            char *redirect_file = tokens[i+1];
+                            redirect_or_not = 1;
+                            shell-> dernier_statut = exec_command_redirection(tokens,redirect_symbole, redirect_file);
+                        }
+                    }
                 }
+            
+            }else if (nb_symbole > 1){
+                redirect_or_not = 1;
+                shell-> dernier_statut = handle_redirections(tokens); 
             }
-        }   
-        if (redirect_or_not == 0){
-            shell->dernier_statut = exec_command(tokens); 
-        }
+       
+            if (redirect_or_not == 0){
+                shell->dernier_statut = exec_command(tokens); 
+            }
         
         free(input);
         
