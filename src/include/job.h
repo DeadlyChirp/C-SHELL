@@ -2,15 +2,27 @@
 #define JOB_H
 
 #include "process.h"
-
+#include "shell_info.h"
+#include "command_exec.h"
 
 // Definition of the job structure
 struct job {
-    int id;
-    struct process *root; // pointer vers le processus racine de la liste des processus
-    char *command; // commande du job
-    pid_t pgid; // group id du job
-    int mode; // mode du job
+     int bg;          // 0 = foreground, 1 = background
+    int id;          // job number
+    pid_t pid;       // process ID
+    int etat;        // done/running/stopped = 0/1/2
+    char *command;   // command of the job
+    struct job *next; // next job in the list
+    int notified;    // true (1) if job status has been reported
+    struct process *processes; // list of processes in the job
 };
 
-#endif // JOB_H
+
+int init_job(char **commands, struct shell_info *shell, int bg, int status);
+int init_process(struct job *job, char **argv, struct shell_info *shell, int status);
+struct job *find_job(struct shell_info *shell, int id);
+int get_last_process_id(struct shell_info *shell);
+int list_jobs(struct job *jobs);
+void update_job_statuses(struct shell_info *shell);
+
+#endif // JOB_H  

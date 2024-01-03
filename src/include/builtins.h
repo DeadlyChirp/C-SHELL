@@ -19,5 +19,6 @@ void mise_a_jour_repertoire_courant();
 int afficher_dernier_statut();
 
 // Ajouter d'autres déclarations de fonctions de commandes intégrées si nécessaire...
-
+int has_active_jobs(struct shell_info *shell);
+int shell_exit(char **args, struct shell_info *shell);
 #endif // BUILTIN_H

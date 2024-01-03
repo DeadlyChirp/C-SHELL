@@ -16,8 +16,24 @@ char *redirect[] ={"<", ">", ">|", ">>", "2>", "2>>", "2>|", "|", "<("} ;
 
 
 
+int is_background_job(char **tokens) {
+    for (int i = 0; tokens[i] != NULL; i++) {
+        if (strcmp(tokens[i], "&") == 0) {
+            tokens[i] = NULL; // Remove the '&' symbol from the tokens
+            return 1;
+        }
+    }
+    return 0;
+}
+    // if ( & est dans la commande ) remplacer 0 par 1
+    // init_job(tokens, shell, is_background_job(tokens), status);
+
+    // if ( & est dans la commande ) remplacer 0 par 1
+    // init_job(tokens, shell, is_background_job(tokens), status);
+
 int exec_command(char **tokens) {
      int status; 
+     int is_bg = is_background_job(tokens);
      int symbole_indices[10]; //store les indices des différents symboles de redirection
         for (unsigned i = 0; tokens[i] != NULL; i++) {
                 for (unsigned j = 0; j< redirect_size; j++) {
@@ -67,6 +83,13 @@ int exec_command(char **tokens) {
         exit(exit_status); // Exit le shell avec le statut donné
     }
 }else {
+    char full_command[1024] = {0}; // Assuming 1024 is a sufficient length
+    for (int i = 0; tokens[i] != NULL; i++) {
+        strcat(full_command, tokens[i]);
+        if (tokens[i + 1] != NULL) {
+            strcat(full_command, " ");
+        }
+    }
         pid_t pid = fork();
 
         if (pid == -1) {
@@ -227,21 +250,26 @@ int exec_command(char **tokens) {
                 perror("execvp");
                 exit(shell->dernier_statut);
             }
-        } else {
-             
+        } else{
+            if (!is_bg) {
             waitpid(pid, &status, 0);
             if (WIFEXITED(status)) {
-                shell->dernier_statut = WEXITSTATUS(status); // Prendre le statut de sortie de l'enfant
+                shell->dernier_statut = WEXITSTATUS(status);
             } else if (WIFSIGNALED(status)) {
-                shell->dernier_statut = WTERMSIG(status); // commande tuée par un signal
+                shell->dernier_statut = WTERMSIG(status);
             } else {
-                shell->dernier_statut = EXIT_FAILURE; // Erreur inconnue
+                shell->dernier_statut = EXIT_FAILURE;
             }
+        } else {
+            // Background job handling
+            printf("[%d] %d Running %s\n", shell->nbr_jobs++, pid, full_command);
+            // Implement job tracking for background jobs here if needed
         }
     }
-    return shell->dernier_statut; // Retour du statut de sortie de la commande
 }
 
+    return shell->dernier_statut;
+}
 
 
 int exec_command_redirection(char **tokens, char *redirect_symbole, char *redirect_file){
