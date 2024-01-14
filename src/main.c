@@ -4,6 +4,11 @@
 
 #include <unistd.h>  
 #include <pwd.h> 
+#include "include/job.h"
+#include <unistd.h>
+#include <sys/wait.h>
+#include <signal.h>
+
 
 struct shell_info *shell = NULL; 
 void main_loop() {
@@ -18,7 +23,14 @@ void main_loop() {
         perror("getcwd() error");
     }
 
+    shell->nbr_jobs = 0;
+
+
+    
+
     while (1) {
+        signal(SIGCHLD, sigchld_handler); // signal handler pour SIGCHLD
+        signal(SIGTERM, sigterm_handler); // signal handler pour SIGTERM
         input = afficher_prompt(shell);
 
         // si l'entrée est NULL, cela signifie que l'utilisateur a appuyé sur Ctrl + D
@@ -33,27 +45,63 @@ void main_loop() {
         }
 
         
-        parse_command(input, tokens); 
+        parse_command(input, tokens);
 
+        int symbole_indices[10]; //store les indices des différents symboles de redirection
+        int nb_symbole = 0; //nombre de symbole de redirection
+        for (unsigned i = 0; tokens[i] != NULL; i++) {
+                for (unsigned j = 0; j< redirect_size; j++) {
+                    if (strcmp(tokens[i], redirect[j]) == 0){
+                        symbole_indices[nb_symbole++] = i;
+                        break;  
+                    } 
+                }
+            }
+        
 
         int redirect_or_not = 0; //0 si pas de redirection, 1 si redirection
 
-        for (unsigned i = 0; tokens[i] != NULL; i++) {
-            for (unsigned j = 0; j< redirect_size; j++) {
-                if (strcmp(tokens[i], redirect[j]) == 0 && tokens[i+1]){
-                    char *redirect_symbole = tokens[i];
-                    char *redirect_file = tokens[i+1];
-                    redirect_or_not = 1;
-                shell-> dernier_statut = exec_command_redirection(tokens, redirect_symbole, redirect_file);
+        
+            if (nb_symbole == 1){
+                for (unsigned i = 0; tokens[i] != NULL; i++) {
+                    for (unsigned j = 0; j< redirect_size; j++) {
+                        if (strcmp(tokens[i], redirect[j]) == 0 && tokens[i+1]){
+                            char *redirect_symbole = tokens[i];
+                            char *redirect_file = tokens[i+1];
+                            redirect_or_not = 1;
+                            shell-> dernier_statut = exec_command_redirection(tokens,redirect_symbole, redirect_file);
+                        }
+                    }
                 }
+            
+            }else if (nb_symbole > 1){
+                redirect_or_not = 1;
+                shell-> dernier_statut = handle_redirections(tokens); 
             }
-        }   
-        if (redirect_or_not == 0){
-            shell->dernier_statut = exec_command(tokens); 
-        }
+       
+            if (redirect_or_not == 0){
+                shell->dernier_statut = exec_command(tokens); 
+              
+            }
+                if (shell->root != NULL) {
+                    struct job *job = shell->root;
+                        while(job != NULL){
+                            if (job->etat == 0) {
+                                shell->root = job->next;
+                                shell->nbr_jobs--;
+                                fprintf(stderr, "[%d]\t%d\t\tDone\t%s\n", job->id, job->pid, job->command);
+                            } else if (job->etat == 2) {
+                                kill_job(shell, job->id);
+                                fprintf(stderr, "[%d]\t%d\t\tKill\t%s\n", job->id, job->pid, job->command);
+                            }
+                            
+                            job = job->next;
+                            
+                        }
+                    }
         
         free(input);
-        
+                
     }
 }
 

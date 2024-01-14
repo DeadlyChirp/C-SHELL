@@ -4,5 +4,6 @@
 
 int exec_command(char **tokens);
 int exec_command_redirection(char **tokens,char *redirect_symbole, char *redirect_file);
+int handle_redirections(char **tokens);
 
 #endif
