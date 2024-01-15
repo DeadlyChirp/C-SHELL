@@ -4,6 +4,10 @@
 #include <unistd.h> // Pour les fonctions système (ex: sleep, fork, etc.)
 #include "include/job.h"
 #include "include/shell_info.h"
+#include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <ctype.h>
 
 // utilitaires pour les jobs
 struct job *find_job(struct shell_info *shell, int id)
@@ -50,8 +54,7 @@ int get_last_process_id(struct shell_info *shell)
 // liste tous les jobs
 int list_jobs(struct job *jobs) {
     if (!jobs) {
-        printf("No jobs\n");
-        return 1;
+        return 0;
     }
 
     struct job *current_job = jobs;
@@ -70,7 +73,7 @@ int list_jobs(struct job *jobs) {
                 break;
         }
         
-        printf("[%d]\t%s\t%s\n", current_job->id, status_str, current_job->command);
+        fprintf(stderr,"[%d]\t%s \t%s\n", current_job->id, status_str, current_job->command);
         current_job = current_job->next;
     }
 
@@ -271,9 +274,10 @@ void add_job(struct shell_info *shell, char *command, pid_t pid, int is_bg) {
     // Add to the front of the job list
     new_job->next = shell->root;
     shell->root = new_job;
+    shell->nbr_jobs++;
 
-    if (is_bg) {
-        printf("[%d] %d Running %s\n", new_job->id, pid, command);
+    if (is_bg == 1) {
+        fprintf(stderr,"[%d]\t%d\t\tRunning\t%s\n", new_job-> id = shell->nbr_jobs, pid, command);
     }
 }
 
@@ -285,5 +289,114 @@ void update_job_status(struct shell_info *shell, pid_t pid, int status) {
             break;
         }
         job = job->next;
+    }
+}
+
+void sigchld_handler(int signo) {
+    int status;
+    pid_t pid;
+    
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+        // Find the job and remove it from the list
+        struct job *current_job = shell->root;
+
+        while (current_job != NULL) {
+            if (current_job->pid == pid) {
+                //printf("\n [%d] Done\t%s\n", shell->root->id, shell->root->command);
+                //shell->root->etat = 0; // etat done 
+               
+                // shell->root = shell->root->next;
+                // shell->nbr_jobs--;
+
+                if (WIFEXITED(status)) {
+                    // printf("[%d] %d Done\t%s\n", current_job->id, pid, current_job->command);
+                    current_job->etat = 0; // etat done 
+                } else if (WTERMSIG(status)) {
+                    // printf("[%d] %d Terminated\t%s\n", current_job->id, pid, current_job->command);
+                    current_job->etat = 2; // etat done 
+                } else if (WIFSTOPPED(status)) {
+                    //printf("[%d] %d Stopped\t%s\n", current_job->id, pid, current_job->command);
+                    current_job->etat = 3; // etat stopped
+                }
+
+                break;
+                
+            }
+            current_job = current_job->next;
+        }
+    }
+}
+
+int kill_job(struct shell_info *shell, int job_id) {
+     struct job *job = find_job(shell, job_id);
+     struct job *previous_job = NULL;
+     struct job *next_job = NULL;
+
+    if (!job) {
+        fprintf(stderr, "Job %d not found\n", job_id);
+        return -1;
+    }
+
+    for (struct job *current_job = shell->root; current_job->id; current_job = current_job->next) {
+        if (current_job == job) {
+            break;
+        }
+        if (current_job->next == job) {
+            previous_job = current_job;
+            break;
+        }
+    }
+    
+    if (job->next != NULL) {
+        next_job = job->next;
+    }else{
+        next_job = NULL;
+    }
+    
+
+    if (previous_job != NULL) {
+        if (next_job != NULL){
+            previous_job->next = next_job;
+            //fprintf(stderr,"[%d]\t%d\tKilled\t%s\n", job->id, job->pid, job->command);
+    shell->nbr_jobs--;
+        }else{
+            previous_job->next = NULL;
+            //fprintf(stderr,"[%d]\t%d\tKilled\t%s\n", job->id, job->pid, job->command);
+    shell->nbr_jobs--;
+        }
+    } else {
+        if (next_job != NULL){
+            shell->root = next_job;
+            //fprintf(stderr,"[%d]\t%d\tKilled\t%s\n", job->id, job->pid, job->command);
+    shell->nbr_jobs--;
+            }else{
+                shell->root = NULL;
+                //fprintf(stderr,"[%d]\t%d\tKilled\t%s\n", job->id, job->pid, job->command);
+    shell->nbr_jobs--;
+            }
+    }
+
+    return 0;
+}
+
+void sigterm_handler(int signo) {
+    int status;
+    pid_t pid;
+
+    while ((pid = waitpid(0, &status, WNOHANG)) > 0) {
+        // Find the job and remove it from the list
+        struct job *current_job = shell->root;
+        printf("pid : %d\n", pid);
+        
+    }
+}
+
+int extractJobID(const char *str) {
+    // Assuming str is in the format "%1" or similar
+    if (str[0] == '%' && isdigit(str[1])) {
+        return atoi(str + 1);
+    } else {
+        // Handle invalid format
+        return -1;  // or some other indicator of failure
     }
 }

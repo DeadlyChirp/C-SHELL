@@ -8,6 +8,7 @@
 #include "sys/wait.h"
 #include "sys/types.h"
 #include "fcntl.h"
+#include <signal.h>
 
 char *redirect[] ={"<", ">", ">|", ">>", "2>", "2>>", "2>|", "|", "<("} ;
     size_t redirect_size = sizeof(redirect)/sizeof(redirect[0]);
@@ -82,6 +83,37 @@ int exec_command(char **tokens) {
     } else {
         exit(exit_status); // Exit le shell avec le statut donné
     }
+}else if (strcmp(tokens[0], "jobs") == 0) {
+        // jobs
+        shell->dernier_statut = list_jobs(shell->root);
+    // } else if (strcmp(tokens[0], "fg") == 0) {
+    //     // fg
+    //     if (tokens[1] == NULL) {
+    //         // fg
+    //         shell->dernier_statut = fg_job(shell, shell->nbr_jobs - 1);
+    //     } else {
+    //         // fg <job_id>
+    //         shell->dernier_statut = fg_job(shell, atoi(tokens[1]));
+    //     }
+    // } else if (strcmp(tokens[0], "bg") == 0) {
+    //     // bg
+    //     if (tokens[1] == NULL) {
+    //         // bg
+    //         shell->dernier_statut = bg_job(shell, shell->nbr_jobs - 1);
+    //     } else {
+    //         // bg <job_id>
+    //         shell->dernier_statut = bg_job(shell, atoi(tokens[1]));
+    //     }
+    } else if (strcmp(tokens[0], "kill") == 0 && tokens[1] != NULL) {
+        // kill <job_id>
+        kill(find_job(shell,atoi(tokens[1])), SIGTERM);
+        
+    // } else if (strcmp(tokens[0], "stop") == 0) {
+    //     // stop <job_id>
+    //     shell->dernier_statut = stop_job(shell, atoi(tokens[1]));
+    // } else if (strcmp(tokens[0], "cont") == 0) {
+    //     // cont <job_id>
+    //     shell->dernier_statut = cont_job(shell, atoi(tokens[1]));
 }else {
     char full_command[1024] = {0}; // Assuming 1024 is a sufficient length
     for (int i = 0; tokens[i] != NULL; i++) {
@@ -118,138 +150,13 @@ int exec_command(char **tokens) {
                 free(tokens2);
                 perror("execvp");
                 exit(shell->dernier_statut);
-            }else if (nb_symbole > 0) {
+            
 
-                int fd[2];
-                //fd[0] = read end
-                //fd[1] = write end
-                int fd_in = 0;
-
-                int i=0;
-                while(i<nb_symbole){
-                    
-
-                    if (pipe(fd)==-1) {
-                        perror("pipe");
-                        exit(EXIT_FAILURE);
-
-                    }
-
-                  
-                    pid_t pid = fork();
-                    if(pid == -1){
-                        perror("fork");
-                        exit(EXIT_FAILURE);
-                    }
-
-                    if (pid == 0){
-                        dup2(fd_in, 0);
-                        if (i != nb_symbole-1){
-                            dup2(fd[1], 1);
-                        }
-                        close(fd[0]);
-
-
-                        char **toks2 = malloc(sizeof(char*) * 16);
-                        int j = 0;
-                        while(tokens[j]!=NULL){
-                            if (j == symbole_indices[i]){
-                                break;
-                            }else{
-                            toks2[j] = tokens[j];
-                            printf("toks2[%d] = %s\n", j, toks2[j]);
-                            j++;
-                            }
-                        }
-
-                        execvp(toks2[0], toks2);
-                        free(toks2);
-                        perror("execvp");
-                        exit(shell->dernier_statut);
-                    }else{
-                        wait(NULL);
-                        close(fd[1]);
-                        fd_in = fd[0];
-                        i++;
-                    }
+            } else{
+                    execvp(tokens[0], tokens);
+                    perror("execvp");
+                    exit(shell->dernier_statut);
                 }
-    // pid_t pid = fork();
-
-    // if (pid == -1) {
-    //     perror("fork");
-    //     shell->dernier_statut = EXIT_FAILURE;
-    // } else if (pid == 0) {
-    //     for (int i = 0; i < nb_symbole; i++) {
-    //         int fd;
-    //         char *redirect_symbol = tokens[symbole_indices[i]];
-    //         char *file_path = tokens[symbole_indices[i] + 1];
-
-    //         int flags = 0;
-
-    //         if (strcmp(redirect_symbol, "<") == 0) {
-    //             fd = open(file_path, O_RDONLY);
-    //         } else if (strcmp(redirect_symbol, ">") == 0) {
-    //             flags = O_WRONLY | O_CREAT | O_TRUNC;
-    //             fd = open(file_path, flags, 0666);
-    //         } else if (strcmp(redirect_symbol, ">>") == 0) {
-    //             flags = O_WRONLY | O_CREAT | O_APPEND;
-    //             fd = open(file_path, flags, 0666);
-    //         } else if (strcmp(redirect_symbol, "2>") == 0) {
-    //             flags = O_WRONLY | O_CREAT | O_TRUNC;
-    //             fd = open(file_path, flags, 0666);
-    //         } else if (strcmp(redirect_symbol, "2>>") == 0) {
-    //             flags = O_WRONLY | O_CREAT | O_APPEND;
-    //             fd = open(file_path, flags, 0666);
-    //         } else if (strcmp(redirect_symbol, ">|") == 0 || strcmp(redirect_symbol, "2>|") == 0) {
-    //             flags = O_WRONLY | O_CREAT;
-    //             fd = open(file_path, flags, 0666);
-    //         } else {
-    //             perror("Unsupported redirection");
-    //             exit(EXIT_FAILURE);
-    //         }
-
-    //         if (fd == -1) {
-    //             perror("open");
-    //             exit(EXIT_FAILURE);
-    //         }
-
-    //         // Check for existing file and handle accordingly
-    //         if ((flags & O_CREAT) && (flags & O_EXCL)) {
-    //             // O_EXCL is set (file must not exist)
-    //             fprintf(stderr, "File '%s' already exists.\n", file_path);
-    //             exit(EXIT_FAILURE);
-    //         }
-
-    //         if (strcmp(redirect_symbol, "<") == 0) {
-    //             dup2(fd, STDIN_FILENO);
-    //         } else if (strcmp(redirect_symbol, ">") == 0 || strcmp(redirect_symbol, ">>") == 0) {
-    //             dup2(fd, STDOUT_FILENO);
-    //         } else if (strcmp(redirect_symbol, "2>") == 0 || strcmp(redirect_symbol, "2>>") == 0) {
-    //             dup2(fd, STDERR_FILENO);
-    //         }
-
-    //         close(fd);
-    //     }
-
-    //     tokens[symbole_indices[0]] = NULL; // Terminate the command part
-    //     execvp(tokens[0], tokens);
-    //     perror("execvp");
-    //     exit(EXIT_FAILURE);
-    // } else {
-    //     waitpid(pid, &status, 0);
-    //     if (WIFEXITED(status)) {
-    //         shell->dernier_statut = WEXITSTATUS(status);
-    //     } else {
-    //         shell->dernier_statut = EXIT_FAILURE;
-    //     }
-    // }
-
-
-         } else{
-                execvp(tokens[0], tokens);
-                perror("execvp");
-                exit(shell->dernier_statut);
-            }
         } else{
             if (!is_bg) {
             waitpid(pid, &status, 0);
@@ -262,7 +169,8 @@ int exec_command(char **tokens) {
             }
         } else {
             // Background job handling
-            printf("[%d] %d Running %s\n", shell->nbr_jobs++, pid, full_command);
+            //printf("[%d] %d Running %s\n", shell->nbr_jobs++, pid, full_command);
+            add_job(shell, full_command, pid , 1);
             // Implement job tracking for background jobs here if needed
         }
     }

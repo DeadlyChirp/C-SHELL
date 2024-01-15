@@ -24,5 +24,7 @@ struct job *find_job(struct shell_info *shell, int id);
 int get_last_process_id(struct shell_info *shell);
 int list_jobs(struct job *jobs);
 void update_job_statuses(struct shell_info *shell);
-
+void sigchld_handler(int signo);
+void sigterm_handler(int signo);
+kill_job(struct shell_info *shell, int id);
 #endif // JOB_H  
